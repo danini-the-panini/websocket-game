@@ -4,6 +4,8 @@ $(function() {
 
   var WIDTH = 800;
   var HEIGHT = 600;
+  var widthHalf = WIDTH/2;
+  var heightHalf = HEIGHT/2;
 
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera( 75, WIDTH/HEIGHT, 0.1, 1000 );
@@ -70,8 +72,11 @@ $(function() {
       console.log("player connected:", playerName);
       var playerCube = new THREE.Mesh( geometry, material );
       scene.add( playerCube );
-      players[playerName] = { object: playerCube };
-      console.log(players);
+      var label = document.createElement('span');
+      label.classList.add('player-label');
+      label.innerText = playerName;
+      document.body.appendChild(label);
+      players[playerName] = { object: playerCube, label: label };
     }
     return players[playerName];
   }
@@ -90,13 +95,22 @@ $(function() {
     var player = findOrCreatePlayer(playerName);
     if (parts[1] === 'disconnected') {
       scene.remove(player.object);
+      document.body.removeChild(player.label);
       delete players[playerName];
       console.log("player disconnected:". playerName);
-      console.log(players);
     } else {
       player.object.position.x = parseFloat(parts[1]);
       player.object.position.y = parseFloat(parts[2]);
       player.object.rotation.z = parseFloat(parts[3]);
+
+      var vector = new THREE.Vector3();
+      vector.setFromMatrixPosition( player.object.matrixWorld ).project(camera );
+
+      vector.x = ( vector.x * widthHalf ) + widthHalf;
+      vector.y = - ( vector.y * heightHalf ) + heightHalf;
+
+      player.label.style.left = '' + vector.x + 'px';
+      player.label.style.top = '' + vector.y + 'px';
     }
   };
   websocket.onerror = function(evt) {
