@@ -8,8 +8,14 @@ const expressWs = require('express-ws')(app);
 
 const clients = [];
 
+function clientForName(name) {
+  for(let i = 0; i < clients.length; i++) {
+    if (clients[i].name === name) return clients[i];
+  }
+}
+
 app.ws('/game', function(ws, req) {
-  const client = { ws: ws };
+  const client = { ws: ws, kills: 0, deaths: 0 };
   clients.push(client);
   ws.on('message', function(msg) {
     if (client.disconnected) {
@@ -30,6 +36,13 @@ app.ws('/game', function(ws, req) {
         }
       });
     } else {
+      if (messageType === 'k') {
+        client.kills++;
+        const deadClient = clientForName(parts[1]);
+        if (deadClient) {
+          deadClient.deaths++;
+        }
+      }
       clients.forEach(function(c) {
         if (c !== client && !c.disconnected) {
           try { c.ws.send('' + client.name + ',' + msg); }

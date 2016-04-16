@@ -13,3 +13,34 @@ html, body {
   color: white;
   text-shadow: 0 0 4px rgba(0, 0, 0, 1);
 }
+
+.scoreboard {
+  position: absolute;
+  left: 0;
+  top: 0;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 1);
+  color: white;
+}
+
+.scoreboard th {
+  border-bottom: 1px solid black;
+}
+
+.scoreboard th, .scoreboard td {
+  text-align: center;
+  padding: 0.1rem 0.5rem;
+}
+
+.scoreboard td span {
+  display: inline-block;
+  vertical-align: center;
+}
+
+.scoreboard td .icon {
+  width: 12px;
+  height: 12px;
+  margin: 4px;
+  float: left;
+  border: 1px solid white;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 1);
+}

@@ -33,10 +33,37 @@ $(function() {
   var cube = new THREE.Mesh( geometry, material );
   scene.add( cube );
 
-  var thisPlayer = { object: cube };
+  var thisPlayer = { object: cube, name: name, kills: 0, deaths: 0 };
 
   camera.position.z = 10;
   camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+  var scoreboard = document.createElement('table');
+  scoreboard.innerHTML += '<thead><tr><th>Name</th><th>K</th><th>D</th></tr></thead>';
+  scoreboard.classList.add('scoreboard');
+  document.body.appendChild(scoreboard);
+
+  function updateScoreCardColor(player) {
+    var icon = player.scorecard.getElementsByClassName('icon')[0];
+    icon.style.backgroundColor = '#' + player.object.material.color.getHexString();
+  }
+
+  function updateScoreCard(player) {
+    player.scorecard.innerHTML = '' +
+      '<td><span class="icon"></span><span>' + player.name + '</span></td>' +
+      '<td>' + player.kills + '</td>' +
+      '<td>' + player.deaths + '</td>';
+    updateScoreCardColor(player);
+  }
+
+  function createScoreCard(player) {
+    player.scorecard = document.createElement('tr');
+    scoreboard.appendChild(player.scorecard);
+    updateScoreCard(player);
+  }
+
+  createScoreCard(thisPlayer);
+  updateScoreCardColor(thisPlayer);
 
   function sendPosition() {
     websocket.send('p,' + cube.position.x + ',' + cube.position.y + ',' + cube.rotation.z);
@@ -109,6 +136,10 @@ $(function() {
         if (lineIntersects(bullet.object.position, oldPosition, player.object)) {
           if (!bullet.player) {
             websocket.send('k,'+name);
+            thisPlayer.kills++;
+            player.deaths++;
+            updateScoreCard(thisPlayer);
+            updateScoreCard(player);
             explode(player);
           }
           return true;
@@ -242,8 +273,14 @@ $(function() {
       label.classList.add('player-label');
       label.innerText = playerName;
       document.body.appendChild(label);
-      players[playerName] = { object: playerCube, label: label };
+      players[playerName] = { object: playerCube, label: label, name: playerName, kills: 0, deaths: 0 };
+      createScoreCard(players[playerName]);
     }
+    return players[playerName];
+  }
+
+  function playerForName(playerName) {
+    if (playerName === name) return thisPlayer;
     return players[playerName];
   }
 
@@ -262,10 +299,12 @@ $(function() {
     var player = findOrCreatePlayer(playerName);
     if (messageType === 'c') {
       player.object.material.color.set('#' + parts[2]);
+      updateScoreCardColor(player);
     } else if (messageType === 'd') {
       console.log("player disconnected:". playerName);
       scene.remove(player.object);
       document.body.removeChild(player.label);
+      scoreboard.removeChild(player.scorecard);
       delete players[playerName];
     } else if (messageType === 'p') {
       player.object.position.x = parseFloat(parts[2]);
@@ -285,6 +324,12 @@ $(function() {
     } else if (messageType === 'k') {
       console.log(playerName + ' killed ' + parts[2]);
       console.log(players);
+      var killer = playerForName(playerName);
+      var victim = playerForName(parts[2]);
+      killer.kills += 1;
+      victim.deaths += 1;
+      updateScoreCard(killer);
+      updateScoreCard(victim);
       if (parts[2] === name) {
         explode(thisPlayer);
       } else {
