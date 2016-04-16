@@ -8,7 +8,7 @@ const expressWs = require('express-ws')(app);
 
 const clients = [];
 
-app.ws('/echo', function(ws, req) {
+app.ws('/game', function(ws, req) {
   const client = { ws: ws };
   clients.push(client);
   ws.on('message', function(msg) {

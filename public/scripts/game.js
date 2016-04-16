@@ -165,7 +165,7 @@ $(function() {
     return players[playerName];
   }
 
-  var websocket = new WebSocket('ws://' + window.location.host + '/echo');
+  var websocket = new WebSocket('ws://' + window.location.host + '/game');
   websocket.onopen = function(evt) {
     websocket.send('c,'+name+','+cube.material.color.getHexString())
     startGame();
