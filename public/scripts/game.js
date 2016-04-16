@@ -36,6 +36,10 @@ $(function() {
   camera.position.z = -10;
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
+  function sendPosition() {
+    websocket.send('p,' + cube.position.x + ',' + cube.position.y + ',' + cube.rotation.z);
+  }
+
   var bullets = [];
 
   var FIRE_TIME = 150;
@@ -82,6 +86,33 @@ $(function() {
     bullet.object.rotation.set(0, 0, rot);
     bullet.player = player;
     bullet.firedAt = new Date().getTime();
+  }
+
+  var vectorA = new THREE.Vector3();
+  var vectorB = new THREE.Vector3();
+  function lineIntersects(a, b, object) {
+    var aToB = vectorA.copy(b).sub(a);
+    var ray1 = new THREE.Ray(a, aToB);
+    var sphere = new THREE.Sphere(object.position, object.geometry.boundingSphere.radius);
+    var intersects1 = ray1.intersectsSphere(sphere);
+    var ray2 = new THREE.Ray(b, aToB.negate());
+    return intersects1 && ray2.intersectsSphere(sphere);
+  }
+
+  function checkBulletCollision(bullet, oldPosition) {
+    for (var name in players) {
+      if (players.hasOwnProperty(name)) {
+        var player = players[name];
+        if (player === bullet.player) continue;
+        if (lineIntersects(bullet.object.position, oldPosition, player.object)) {
+          if (!bullet.player) {
+            websocket.send('k,'+name);
+          }
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   function startGame() {
@@ -132,18 +163,19 @@ $(function() {
 
       bullets.forEach(function(bullet) {
         if (bullet.object.visible) {
+          var oldPosition = bullet.object.position.clone();
           bullet.object.position
             .add(new THREE.Vector3(0, 1, 0)
               .applyQuaternion(bullet.object.quaternion)
               .normalize()
               .multiplyScalar(BULLET_SPEED));
-          if (now - bullet.firedAt > BULLET_LIFE) {
+          if (now - bullet.firedAt > BULLET_LIFE || checkBulletCollision(bullet, oldPosition)) {
             bullet.object.visible = false;
           }
         }
       });
 
-      websocket.send('p,' + cube.position.x + ',' + cube.position.y + ',' + cube.rotation.z);
+      sendPosition();
 
       renderer.render(scene, camera);
     };
@@ -200,6 +232,13 @@ $(function() {
       player.label.style.top = '' + vector.y + 'px';
     } else if (messageType === 'f') {
       playerFired(player, parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]))
+    } else if (messageType === 'k') {
+      console.log(playerName + ' killed ' + parts[2]);
+      if (parts[2] === name) {
+        cube.position.set(0, 0, 0);
+        cube.rotation.set(0, 0, 0);
+        sendPosition();
+      }
     }
   };
   websocket.onerror = function(evt) {
