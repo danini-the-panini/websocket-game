@@ -100,12 +100,15 @@ $(function() {
 
     $(document).on('keydown', function(e) {
       keystates[e.keyCode] = true;
+      e.preventDefault();
     }).on('keyup', function(e) {
       keystates[e.keyCode] = false;
+      e.preventDefault();
     });
 
     $(document).on('mouseup', function(e) {
         isDragging = false;
+        e.preventDefault();
     });
 
     var render = function () {
@@ -177,10 +180,10 @@ $(function() {
     var messageType = parts[1];
     var player = findOrCreatePlayer(playerName);
     if (messageType === 'd') {
+      console.log("player disconnected:". playerName);
       scene.remove(player.object);
       document.body.removeChild(player.label);
       delete players[playerName];
-      console.log("player disconnected:". playerName);
     } else if (messageType === 'p') {
       player.object.position.x = parseFloat(parts[2]);
       player.object.position.y = parseFloat(parts[3]);
