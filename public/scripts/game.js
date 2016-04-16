@@ -14,8 +14,22 @@ $(function() {
   renderer.setSize(WIDTH, HEIGHT);
   document.body.appendChild( renderer.domElement );
 
+  var geometry = new THREE.BoxGeometry( 100, 100, 1 );
+  var material = new THREE.MeshPhongMaterial({ color: 0x999999 });
+  var floor = new THREE.Mesh( geometry, material );
+  floor.position.z = 0.5;
+  scene.add( floor );
+
+  var amLight = new THREE.AmbientLight( 0x404040 );
+  scene.add( amLight );
+
+  var light = new THREE.DirectionalLight( 0xffffff );
+  light.position.set(10, 5, -50);
+  light.lookAt(floor);
+  scene.add( light );
+
   var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  var material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff });
+  var material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
   var cube = new THREE.Mesh( geometry, material );
   scene.add( cube );
 
@@ -71,7 +85,7 @@ $(function() {
   function findOrCreatePlayer(playerName, playerColor) {
     if (!players[playerName]) {
       console.log("player connected:", playerName);
-      var playerCube = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial( { color: 0x00ff00 } ) );
+      var playerCube = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: 0x00ff00 } ) );
       scene.add( playerCube );
       var label = document.createElement('span');
       label.classList.add('player-label');
