@@ -4,20 +4,31 @@ const express = require('express');
 const app = express();
 
 app.use(express.static('public'));
-var expressWs = require('express-ws')(app);
+const expressWs = require('express-ws')(app);
 
-var clients = [];
+const clients = [];
 
 app.ws('/echo', function(ws, req) {
-  var client = { ws: ws };
+  const client = { ws: ws };
   clients.push(client);
   ws.on('message', function(msg) {
     if (client.disconnected) {
       return;
     }
-    if (!client.name) {
-      client.name = msg || ('Player ' + clients.length);
+    const parts = msg.split(',');
+    const messageType = parts[0];
+    if (messageType === 'c') {
+      client.name = parts[1];
+      client.color = parts[2];
       console.log('Client Connected: ' + client.name);
+      clients.forEach(function(c) {
+        if (c !== client && !c.disconnected) {
+          try {
+            c.ws.send(client.name+',c,'+client.color);
+            client.ws.send(c.name+',c,'+c.color);
+          } catch (e) {console.error(e);}
+        }
+      });
     } else {
       clients.forEach(function(c) {
         if (c !== client && !c.disconnected) {
@@ -36,7 +47,7 @@ app.ws('/echo', function(ws, req) {
         catch (e) {console.error(e);}
       }
     });
-    for(var i = clients.length - 1; i >= 0; i--) {
+    for(let i = clients.length - 1; i >= 0; i--) {
       if(clients[i] === client) {
          clients.splice(i, 1);
          return;

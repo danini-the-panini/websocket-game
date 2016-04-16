@@ -143,8 +143,7 @@ $(function() {
         }
       });
 
-      websocket.send('p,' + cube.position.x + ',' + cube.position.y + ',' + cube.rotation.z +
-        ',' + cube.material.color.getHexString());
+      websocket.send('p,' + cube.position.x + ',' + cube.position.y + ',' + cube.rotation.z);
 
       renderer.render(scene, camera);
     };
@@ -168,7 +167,7 @@ $(function() {
 
   var websocket = new WebSocket('ws://' + window.location.host + '/echo');
   websocket.onopen = function(evt) {
-    websocket.send(name)
+    websocket.send('c,'+name+','+cube.material.color.getHexString())
     startGame();
   };
   websocket.onclose = function(evt) {
@@ -179,7 +178,9 @@ $(function() {
     var playerName = parts[0];
     var messageType = parts[1];
     var player = findOrCreatePlayer(playerName);
-    if (messageType === 'd') {
+    if (messageType === 'c') {
+      player.object.material.color.set('#' + parts[2]);
+    } else if (messageType === 'd') {
       console.log("player disconnected:". playerName);
       scene.remove(player.object);
       document.body.removeChild(player.label);
@@ -188,8 +189,6 @@ $(function() {
       player.object.position.x = parseFloat(parts[2]);
       player.object.position.y = parseFloat(parts[3]);
       player.object.rotation.z = parseFloat(parts[4]);
-
-      player.object.material.color.set('#' + parts[5]);
 
       var vector = new THREE.Vector3();
       vector.setFromMatrixPosition( player.object.matrixWorld ).project(camera );
