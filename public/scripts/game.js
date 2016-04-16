@@ -17,14 +17,14 @@ $(function() {
   var geometry = new THREE.BoxGeometry( 100, 100, 1 );
   var material = new THREE.MeshPhongMaterial({ color: 0x999999 });
   var floor = new THREE.Mesh( geometry, material );
-  floor.position.z = 0.5;
+  floor.position.z = -0.5;
   scene.add( floor );
 
   var amLight = new THREE.AmbientLight( 0x404040 );
   scene.add( amLight );
 
   var light = new THREE.DirectionalLight( 0xffffff );
-  light.position.set(10, 5, -50);
+  light.position.set(10, 5, 50);
   light.lookAt(floor);
   scene.add( light );
 
@@ -33,7 +33,9 @@ $(function() {
   var cube = new THREE.Mesh( geometry, material );
   scene.add( cube );
 
-  camera.position.z = -10;
+  var thisPlayer = { object: cube };
+
+  camera.position.z = 10;
   camera.lookAt(new THREE.Vector3(0, 0, 0));
 
   function sendPosition() {
@@ -107,12 +109,50 @@ $(function() {
         if (lineIntersects(bullet.object.position, oldPosition, player.object)) {
           if (!bullet.player) {
             websocket.send('k,'+name);
+            explode(player);
           }
           return true;
         }
       }
     }
+    if (bullet.player && lineIntersects(bullet.object.position, oldPosition, thisPlayer.object)) {
+      return true;
+    }
     return false;
+  }
+
+  var particles = [];
+
+  var particleGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+
+  function getParticle(material) {
+    for (var i = 0; i < particles.length; i++) {
+      if (!particles[i].object.visible) {
+        particles[i].object.visible = true;
+        particles[i].object.material = material;
+        return particles[i];
+      }
+    }
+    var particle = {
+      object: new THREE.Mesh(particleGeometry, material),
+      velocity: new THREE.Vector3()
+    };
+    scene.add(particle.object);
+    particles.push(particle);
+    return particle;
+  }
+
+  function explode(player) {
+    for (var i = 0; i < 500; i ++) {
+      var particle = getParticle(player.object.material);
+      var speed = 0.1 + (Math.random() * 0.2);
+      particle.object.position.copy(player.object.position);
+      particle.velocity.set(
+        -1.0 + (Math.random() * 2.0),
+        -1.0 + (Math.random() * 2.0),
+        0.0 + (Math.random() * 1.0)
+      ).normalize().multiplyScalar(speed);
+    }
   }
 
   function startGame() {
@@ -153,9 +193,9 @@ $(function() {
         cube.position.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(-0.1));
       }
       if(keystates[LEFT]) {
-        cube.rotation.z += 0.1;
-      } else if (keystates[RIGHT]) {
         cube.rotation.z -= 0.1;
+      } else if (keystates[RIGHT]) {
+        cube.rotation.z += 0.1;
       }
       if(keystates[SPACE]) {
         fireGun();
@@ -171,6 +211,16 @@ $(function() {
               .multiplyScalar(BULLET_SPEED));
           if (now - bullet.firedAt > BULLET_LIFE || checkBulletCollision(bullet, oldPosition)) {
             bullet.object.visible = false;
+          }
+        }
+      });
+
+      particles.forEach(function(particle) {
+        if (particle.object.visible) {
+          particle.object.position.add(particle.velocity);
+          particle.velocity.z -= 0.02;
+          if (particle.object.position.z < 0) {
+            particle.object.visible = false;
           }
         }
       });
@@ -234,8 +284,14 @@ $(function() {
       playerFired(player, parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]))
     } else if (messageType === 'k') {
       console.log(playerName + ' killed ' + parts[2]);
+      console.log(players);
       if (parts[2] === name) {
-        cube.position.set(0, 0, 0);
+        explode(thisPlayer);
+      } else {
+        explode(players[parts[2]]);
+      }
+      if (parts[2] === name) {
+        cube.position.set(-10 + Math.random() * 20, -5 + Math.random() * 10, 0);
         cube.rotation.set(0, 0, 0);
         sendPosition();
       }
