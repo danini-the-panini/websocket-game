@@ -2,16 +2,16 @@ $(function() {
   var name = prompt("Please enter your name");
   const players = {};
 
-  var WIDTH = 800;
-  var HEIGHT = 600;
-  var widthHalf = WIDTH/2;
-  var heightHalf = HEIGHT/2;
+  var windowWidth = window.innerWidth;
+  var windowHeight = window.innerHeight;
+  var widthHalf = windowWidth/2;
+  var heightHalf = windowHeight/2;
 
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera( 75, WIDTH/HEIGHT, 0.1, 1000 );
+  var camera = new THREE.PerspectiveCamera( 75, windowWidth/windowHeight, 0.1, 1000 );
 
   var renderer = new THREE.WebGLRenderer();
-  renderer.setSize(WIDTH, HEIGHT);
+  renderer.setSize(windowWidth, windowHeight);
   document.body.appendChild( renderer.domElement );
 
   renderer.shadowMap.enabled = true;
@@ -52,6 +52,17 @@ $(function() {
 
   camera.position.z = 10;
   camera.lookAt(new THREE.Vector3(0, 0, 0));
+
+  window.addEventListener( 'resize', function(){
+    windowWidth = window.innerWidth;
+    windowHeight = window.innerHeight;
+    var widthHalf = windowWidth/2;
+    var heightHalf = windowHeight/2;
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize( window.innerWidth, window.innerHeight );
+  }, false );
 
   var scoreboard = document.createElement('table');
   scoreboard.innerHTML += '<thead><tr><th>Name</th><th>K</th><th>D</th></tr></thead>';
