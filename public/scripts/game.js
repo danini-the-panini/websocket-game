@@ -190,7 +190,7 @@ $(function() {
     for (var name in players) {
       if (players.hasOwnProperty(name)) {
         var player = players[name];
-        if (player === bullet.player) continue;
+        if (player === bullet.player || player.dead) continue;
         if (lineIntersects(bullet.object.position, oldPosition, player.object)) {
           if (!bullet.player) {
             websocket.send('k,'+name);
@@ -199,6 +199,10 @@ $(function() {
             updateScoreCard(thisPlayer);
             updateScoreCard(player);
             explode(player);
+            player.label.style.display = 'none';
+            player.indicator.visible = false;
+            player.dead = true;
+            player.object.visible = false;
           }
           return true;
         }
@@ -246,98 +250,20 @@ $(function() {
     }
   }
 
-  function startGame() {
-    spawn();
+  var SPAWN_TIME = 5000;
 
-    var isDragging = false;
-    var previousMousePosition = new THREE.Vector2(0, 0);
-    var deltaMove = new THREE.Vector2(0, 0);
-    var cameraMousePosition = new THREE.Vector3();
-
-    var RIGHT = 37;
-    var UP = 38;
-    var LEFT = 39;
-    var DOWN = 40;
-    var SPACE = 32;
-
-    var keystates = {};
-
-    $(document).on('keydown', function(e) {
-      keystates[e.keyCode] = true;
-      e.preventDefault();
-    }).on('keyup', function(e) {
-      keystates[e.keyCode] = false;
-      e.preventDefault();
-    });
-
-    $(document).on('mouseup', function(e) {
-        isDragging = false;
-        e.preventDefault();
-    });
-
-    var render = function () {
-      requestAnimationFrame( render );
-
-      var now = new Date().getTime();
-
-      if(keystates[UP]) {
-        velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(ACCELERATION));
-      } else if (keystates[DOWN]) {
-        velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(-ACCELERATION));
-      } else {
-        velocity.multiplyScalar(DAMPENING);
+  function respawn() {
+    thisPlayer.dead = false;
+    thisPlayer.object.visible = true;
+    spawn()
+    sendPosition();
+    for (var name in players) {
+      if (players.hasOwnProperty(name)) {
+        var player = players[name];
+        updatePlayerIndicator(player);
+        updatePlayerLabel(player);
       }
-      if (velocity.lengthSq() > MAX_SPEED * MAX_SPEED) {
-        velocity.setLength(MAX_SPEED);
-      }
-      if(keystates[LEFT]) {
-        cube.rotation.z -= 0.1;
-      } else if (keystates[RIGHT]) {
-        cube.rotation.z += 0.1;
-      }
-      if(keystates[SPACE]) {
-        fireGun();
-      }
-
-      cube.position.add(velocity);
-
-      bullets.forEach(function(bullet) {
-        if (bullet.object.visible) {
-          var oldPosition = bullet.object.position.clone();
-          bullet.object.position
-            .add(new THREE.Vector3(0, 1, 0)
-              .applyQuaternion(bullet.object.quaternion)
-              .normalize()
-              .multiplyScalar(BULLET_SPEED));
-          if (now - bullet.firedAt > BULLET_LIFE || checkBulletCollision(bullet, oldPosition)) {
-            bullet.object.visible = false;
-          }
-        }
-      });
-
-      particles.forEach(function(particle) {
-        if (particle.object.visible) {
-          particle.object.position.add(particle.velocity);
-          particle.velocity.z -= 0.02;
-          if (particle.object.position.z < 0) {
-            particle.object.visible = false;
-          }
-        }
-      });
-
-      sendPosition();
-      for (var name in players) {
-        if (players.hasOwnProperty(name)) {
-          var player = players[name];
-          updatePlayerIndicator(player);
-          updatePlayerLabel(player);
-        }
-      }
-
-      renderer.render(scene, camera);
-    };
-
-    render();
+    }
   }
 
   function updatePlayerLabel(player) {
@@ -393,6 +319,106 @@ $(function() {
     return players[playerName];
   }
 
+  function startGame() {
+    spawn();
+
+    var isDragging = false;
+    var previousMousePosition = new THREE.Vector2(0, 0);
+    var deltaMove = new THREE.Vector2(0, 0);
+    var cameraMousePosition = new THREE.Vector3();
+
+    var RIGHT = 37;
+    var UP = 38;
+    var LEFT = 39;
+    var DOWN = 40;
+    var SPACE = 32;
+
+    var keystates = {};
+
+    $(document).on('keydown', function(e) {
+      keystates[e.keyCode] = true;
+      e.preventDefault();
+    }).on('keyup', function(e) {
+      keystates[e.keyCode] = false;
+      e.preventDefault();
+    });
+
+    $(document).on('mouseup', function(e) {
+        isDragging = false;
+        e.preventDefault();
+    });
+
+    var render = function () {
+      requestAnimationFrame( render );
+
+      var now = new Date().getTime();
+
+      if (thisPlayer.dead) {
+        if (now - thisPlayer.diedAt > SPAWN_TIME) {
+          respawn();
+        }
+      } else {
+        if(keystates[UP]) {
+          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(ACCELERATION));
+        } else if (keystates[DOWN]) {
+          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(-ACCELERATION));
+        } else {
+          velocity.multiplyScalar(DAMPENING);
+        }
+        if (velocity.lengthSq() > MAX_SPEED * MAX_SPEED) {
+          velocity.setLength(MAX_SPEED);
+        }
+        if(keystates[LEFT]) {
+          cube.rotation.z -= 0.1;
+        } else if (keystates[RIGHT]) {
+          cube.rotation.z += 0.1;
+        }
+        if(keystates[SPACE]) {
+          fireGun();
+        }
+
+        cube.position.add(velocity);
+
+        sendPosition();
+      }
+
+      bullets.forEach(function(bullet) {
+        if (bullet.object.visible) {
+          var oldPosition = bullet.object.position.clone();
+          bullet.object.position
+            .add(new THREE.Vector3(0, 1, 0)
+              .applyQuaternion(bullet.object.quaternion)
+              .normalize()
+              .multiplyScalar(BULLET_SPEED));
+          if (now - bullet.firedAt > BULLET_LIFE || checkBulletCollision(bullet, oldPosition)) {
+            bullet.object.visible = false;
+          }
+        }
+      });
+
+      particles.forEach(function(particle) {
+        if (particle.object.visible) {
+          particle.object.position.add(particle.velocity);
+          particle.velocity.z -= 0.02;
+          if (particle.object.position.z < 0) {
+            particle.object.visible = false;
+          }
+        }
+      });
+
+      for (var name in players) {
+        if (players.hasOwnProperty(name)) {
+          var player = players[name];
+          updatePlayerIndicator(player);
+          updatePlayerLabel(player);
+        }
+      }
+      renderer.render(scene, camera);
+    };
+
+    render();
+  }
+
   function playerForName(playerName) {
     if (playerName === name) return thisPlayer;
     return players[playerName];
@@ -426,6 +452,13 @@ $(function() {
       player.object.position.y = parseFloat(parts[3]);
       player.object.rotation.z = parseFloat(parts[4]);
 
+      if (player.dead) {
+        player.object.visible = true;
+        player.dead = false;
+        player.label.style.display = 'inline-block';
+        player.indicator.visible = true;
+      }
+
       updatePlayerLabel(player);
       updatePlayerIndicator(player);
     } else if (messageType === 'f') {
@@ -436,20 +469,19 @@ $(function() {
       var killer = playerForName(playerName);
       var victim = playerForName(parts[2]);
       killer.kills += 1;
-      victim.deaths += 1;
       updateScoreCard(killer);
-      updateScoreCard(victim);
-      if (victim) explode(victim);
-      if (victim === thisPlayer) {
-        spawn()
-        sendPosition();
-        for (var name in players) {
-          if (players.hasOwnProperty(name)) {
-            var player = players[name];
-            updatePlayerIndicator(player);
-            updatePlayerLabel(player);
-          }
+      if (victim) {
+        victim.deaths += 1;
+        updateScoreCard(victim);
+        explode(victim);
+        if (victim === thisPlayer) {
+          thisPlayer.diedAt = new Date().getTime();
+        } else {
+          victim.label.style.display = 'none';
+          victim.indicator.visible = false;
         }
+        victim.dead = true;
+        victim.object.visible = false;
       }
     }
   };

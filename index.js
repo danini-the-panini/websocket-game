@@ -14,12 +14,19 @@ function clientForName(name) {
   }
 }
 
+const SPAWN_TIME = 5000;
+
 app.ws('/game', function(ws, req) {
   const client = { ws: ws, kills: 0, deaths: 0 };
   clients.push(client);
   ws.on('message', function(msg) {
+    const now = new Date().getTime();
     if (client.disconnected) {
       return;
+    }
+    if (client.dead) {
+      if (now - client.diedAt < SPAWN_TIME) return;
+      client.dead = false;
     }
     const parts = msg.split(',');
     const messageType = parts[0];
@@ -41,6 +48,7 @@ app.ws('/game', function(ws, req) {
         const deadClient = clientForName(parts[1]);
         if (deadClient) {
           deadClient.deaths++;
+          deadClient.dead = true;
         }
       }
       clients.forEach(function(c) {
