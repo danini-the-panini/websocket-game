@@ -15,7 +15,7 @@ $(function() {
   document.body.appendChild( renderer.domElement );
 
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFShadowMap;
+  renderer.shadowMap.type = THREE.BasicShadowMap;
 
   var geometry = new THREE.BoxGeometry( 100, 100, 1 );
   var texture = new THREE.TextureLoader().load( "images/floor.png" );
