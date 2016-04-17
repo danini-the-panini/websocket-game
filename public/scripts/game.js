@@ -24,23 +24,6 @@ $(function() {
   floor.position.z = -0.5;
   scene.add( floor );
 
-  var amLight = new THREE.AmbientLight( 0x404040 );
-  scene.add( amLight );
-
-  var light = new THREE.DirectionalLight( 0xffffff );
-  light.castShadow = true;
-  light.shadow.mapSize.set(1024, 1024);
-  light.shadow.camera.near = 0.1;
-  light.shadow.camera.far = 100;
-  light.shadow.camera.right = 10;
-  light.shadow.camera.left = -10;
-  light.shadow.camera.top = 10;
-  light.shadow.camera.bottom = -10;
-  light.position.set(10, 5, 30);
-  light.lookAt(floor);
-  scene.add( light );
-  // scene.add(new THREE.CameraHelper( light.shadow.camera ));
-
   var geometry = new THREE.BoxGeometry( 1, 1, 1 );
   var material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
   var cube = new THREE.Mesh( geometry, material );
@@ -50,8 +33,27 @@ $(function() {
 
   var thisPlayer = { object: cube, name: name, kills: 0, deaths: 0 };
 
+  var amLight = new THREE.AmbientLight( 0x404040 );
+  scene.add( amLight );
+
+  var light = new THREE.DirectionalLight( 0xffffff );
+  light.castShadow = true;
+  light.shadow.mapSize.set(1024, 1024);
+  light.shadow.camera.near = 5;
+  light.shadow.camera.far = 50;
+  light.shadow.camera.right = 10;
+  light.shadow.camera.left = -10;
+  light.shadow.camera.top = 10;
+  light.shadow.camera.bottom = -10;
+  light.position.set(10, 5, 30);
+  light.lookAt(cube.position);
+  light.target = cube;
+  scene.add( light );
+  // scene.add(new THREE.CameraHelper( light.shadow.camera ));
+
   camera.position.z = 10;
-  camera.lookAt(new THREE.Vector3(0, 0, 0));
+  camera.lookAt(cube.position);
+  camera.target = cube;
 
   window.addEventListener( 'resize', function(){
     windowWidth = window.innerWidth;
@@ -91,7 +93,15 @@ $(function() {
   createScoreCard(thisPlayer);
   updateScoreCardColor(thisPlayer);
 
+  var cameraOffset = new THREE.Vector3(0, 0, 10);
+  var lightOffset = new THREE.Vector3(10, 5, 30);
+
   function sendPosition() {
+    camera.position.copy(cube.position).add(cameraOffset);
+    light.position.copy(cube.position).add(lightOffset);
+
+    light.updateMatrix();
+    light.updateMatrixWorld();
     websocket.send('p,' + cube.position.x + ',' + cube.position.y + ',' + cube.rotation.z);
   }
 
