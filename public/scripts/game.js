@@ -326,11 +326,29 @@ $(function() {
       });
 
       sendPosition();
+      for (var name in players) {
+        if (players.hasOwnProperty(name)) {
+          var player = players[name];
+          updatePlayerIndicator(player);
+          updatePlayerLabel(player);
+        }
+      }
 
       renderer.render(scene, camera);
     };
 
     render();
+  }
+
+  function updatePlayerLabel(player) {
+    var vector = new THREE.Vector3();
+    vector.setFromMatrixPosition( player.object.matrixWorld ).project(camera);
+
+    vector.x = ( vector.x * widthHalf ) + widthHalf;
+    vector.y = - ( vector.y * heightHalf ) + heightHalf;
+
+    player.label.style.left = '' + vector.x + 'px';
+    player.label.style.top = '' + vector.y + 'px';
   }
 
   var indVector = new THREE.Vector3();
@@ -408,14 +426,7 @@ $(function() {
       player.object.position.y = parseFloat(parts[3]);
       player.object.rotation.z = parseFloat(parts[4]);
 
-      var vector = new THREE.Vector3();
-      vector.setFromMatrixPosition( player.object.matrixWorld ).project(camera );
-
-      vector.x = ( vector.x * widthHalf ) + widthHalf;
-      vector.y = - ( vector.y * heightHalf ) + heightHalf;
-
-      player.label.style.left = '' + vector.x + 'px';
-      player.label.style.top = '' + vector.y + 'px';
+      updatePlayerLabel(player);
       updatePlayerIndicator(player);
     } else if (messageType === 'f') {
       playerFired(player, parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]))
@@ -436,6 +447,7 @@ $(function() {
           if (players.hasOwnProperty(name)) {
             var player = players[name];
             updatePlayerIndicator(player);
+            updatePlayerLabel(player);
           }
         }
       }
