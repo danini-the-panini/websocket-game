@@ -18,7 +18,11 @@ $(function() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
   var geometry = new THREE.BoxGeometry( 100, 100, 1 );
-  var material = new THREE.MeshPhongMaterial({ color: 0x999999 });
+  var texture = new THREE.TextureLoader().load( "images/floor.png" );
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set( 20, 20 );
+  var material = new THREE.MeshPhongMaterial({ color: 0x999999, map: texture });
   var floor = new THREE.Mesh( geometry, material );
   floor.receiveShadow = true;
   floor.position.z = -0.5;
@@ -30,6 +34,11 @@ $(function() {
   cube.receiveShadow = true;
   cube.castShadow = true;
   scene.add( cube );
+
+  function spawn() {
+    cube.position.set(-10 + Math.random() * 20, -5 + Math.random() * 10, 0);
+    cube.rotation.set(0, 0, Math.random() * 2 * Math.PI);
+  }
 
   var thisPlayer = { object: cube, name: name, kills: 0, deaths: 0 };
 
@@ -58,12 +67,12 @@ $(function() {
   window.addEventListener( 'resize', function(){
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
-    var widthHalf = windowWidth/2;
-    var heightHalf = windowHeight/2;
-    camera.aspect = window.innerWidth / window.innerHeight;
+    widthHalf = windowWidth/2;
+    heightHalf = windowHeight/2;
+    camera.aspect = windowWidth / windowHeight;
     camera.updateProjectionMatrix();
 
-    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setSize( windowWidth, windowHeight );
   }, false );
 
   var scoreboard = document.createElement('table');
@@ -227,6 +236,8 @@ $(function() {
   }
 
   function startGame() {
+    spawn();
+
     var isDragging = false;
     var previousMousePosition = new THREE.Vector2(0, 0);
     var deltaMove = new THREE.Vector2(0, 0);
@@ -304,6 +315,16 @@ $(function() {
     render();
   }
 
+  var indVector = new THREE.Vector3();
+  function updatePlayerIndicator(player) {
+    indVector.copy(player.object.position).sub(thisPlayer.object.position);
+    var distanceSq = indVector.lengthSq();
+    indVector.normalize();
+    player.indicator.visible = distanceSq > 100;
+    player.indicator.position.copy(indVector.multiplyScalar(5).add(thisPlayer.object.position));
+    player.indicator.lookAt(player.object.position);
+  }
+
   function findOrCreatePlayer(playerName, playerColor) {
     if (!players[playerName]) {
       console.log("player connected:", playerName);
@@ -315,7 +336,16 @@ $(function() {
       label.classList.add('player-label');
       label.innerText = playerName;
       document.body.appendChild(label);
-      players[playerName] = { object: playerCube, label: label, name: playerName, kills: 0, deaths: 0 };
+      var playerIndicator = new THREE.Mesh(geometry, playerCube.material);
+      scene.add(playerIndicator);
+      playerIndicator.scale.set(0.2, 0.2, 0.2);
+      players[playerName] = {
+        object: playerCube,
+        indicator: playerIndicator,
+        label: label,
+        name: playerName,
+        kills: 0, deaths: 0 };
+      updatePlayerIndicator(players[playerName]);
       createScoreCard(players[playerName]);
     }
     return players[playerName];
@@ -343,8 +373,9 @@ $(function() {
       player.object.material.color.set('#' + parts[2]);
       updateScoreCardColor(player);
     } else if (messageType === 'd') {
-      console.log("player disconnected:". playerName);
+      console.log("player disconnected:", playerName);
       scene.remove(player.object);
+      scene.remove(player.indicator);
       document.body.removeChild(player.label);
       scoreboard.removeChild(player.scorecard);
       delete players[playerName];
@@ -361,6 +392,7 @@ $(function() {
 
       player.label.style.left = '' + vector.x + 'px';
       player.label.style.top = '' + vector.y + 'px';
+      updatePlayerIndicator(player);
     } else if (messageType === 'f') {
       playerFired(player, parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]))
     } else if (messageType === 'k') {
@@ -372,15 +404,16 @@ $(function() {
       victim.deaths += 1;
       updateScoreCard(killer);
       updateScoreCard(victim);
-      if (parts[2] === name) {
-        explode(thisPlayer);
-      } else {
-        explode(players[parts[2]]);
-      }
-      if (parts[2] === name) {
-        cube.position.set(-10 + Math.random() * 20, -5 + Math.random() * 10, 0);
-        cube.rotation.set(0, 0, 0);
+      if (victim) explode(victim);
+      if (victim === thisPlayer) {
+        spawn()
         sendPosition();
+        for (var name in players) {
+          if (players.hasOwnProperty(name)) {
+            var player = players[name];
+            updatePlayerIndicator(player);
+          }
+        }
       }
     }
   };
