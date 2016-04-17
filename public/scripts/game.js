@@ -15,25 +15,30 @@ $(function() {
   document.body.appendChild( renderer.domElement );
 
   renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
 
   var geometry = new THREE.BoxGeometry( 100, 100, 1 );
   var texture = new THREE.TextureLoader().load( "images/floor.png" );
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set( 20, 20 );
-  var material = new THREE.MeshPhongMaterial({ color: 0x999999, map: texture });
+  var material = new THREE.MeshLambertMaterial({ color: 0xffffff, map: texture });
   var floor = new THREE.Mesh( geometry, material );
   floor.receiveShadow = true;
   floor.position.z = -0.5;
   scene.add( floor );
 
-  var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  var material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
+  geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
   var cube = new THREE.Mesh( geometry, material );
   cube.receiveShadow = true;
   cube.castShadow = true;
   scene.add( cube );
+
+  var MAX_SPEED = 0.2;
+  var ACCELERATION = 0.005;
+  var DAMPENING = 0.99;
+  var velocity = new THREE.Vector3(0, 0, 0);
 
   function spawn() {
     cube.position.set(-10 + Math.random() * 20, -5 + Math.random() * 10, 0);
@@ -270,9 +275,14 @@ $(function() {
       var now = new Date().getTime();
 
       if(keystates[UP]) {
-        cube.position.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(0.1));
+        velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(ACCELERATION));
       } else if (keystates[DOWN]) {
-        cube.position.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(-0.1));
+        velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(-ACCELERATION));
+      } else {
+        velocity.multiplyScalar(DAMPENING);
+      }
+      if (velocity.lengthSq() > MAX_SPEED * MAX_SPEED) {
+        velocity.setLength(MAX_SPEED);
       }
       if(keystates[LEFT]) {
         cube.rotation.z -= 0.1;
@@ -282,6 +292,8 @@ $(function() {
       if(keystates[SPACE]) {
         fireGun();
       }
+
+      cube.position.add(velocity);
 
       bullets.forEach(function(bullet) {
         if (bullet.object.visible) {
