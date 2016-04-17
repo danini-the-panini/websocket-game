@@ -31,8 +31,14 @@ $(function() {
   geometry = new THREE.BoxGeometry( 1, 1, 1 );
   material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
   var cube = new THREE.Mesh( geometry, material );
+  var cube2 = new THREE.Mesh( geometry, material );
   cube.receiveShadow = true;
   cube.castShadow = true;
+  cube2.receiveShadow = true;
+  cube2.castShadow = true;
+  cube2.scale.set(0.5, 0.5, 0.5);
+  cube2.position.set(0, 0.5, 0);
+  cube.add(cube2);
   scene.add( cube );
 
   var MAX_SPEED = 0.2;
@@ -341,6 +347,12 @@ $(function() {
     if (!players[playerName]) {
       console.log("player connected:", playerName);
       var playerCube = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: 0x00ff00 } ) );
+      var cube2 = new THREE.Mesh( geometry, playerCube.material );
+      cube2.receiveShadow = true;
+      cube2.castShadow = true;
+      cube2.scale.set(0.5, 0.5, 0.5);
+      cube2.position.set(0, 0.5, 0);
+      playerCube.add(cube2);
       playerCube.receiveShadow = true;
       playerCube.castShadow = true;
       scene.add( playerCube );
