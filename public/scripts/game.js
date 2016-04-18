@@ -445,7 +445,7 @@ $(function() {
 
   var websocket = new WebSocket('ws://' + window.location.host + '/game');
   websocket.onopen = function(evt) {
-    websocket.send('c,'+name+','+cube.material.color.getHexString())
+    websocket.send('c,'+name)
     startGame();
   };
   websocket.onclose = function(evt) {
@@ -455,6 +455,13 @@ $(function() {
     var parts = evt.data.split(',');
     var playerName = parts[0];
     var messageType = parts[1];
+    if (messageType === 'n') {
+      thisPlayer.name = name = playerName;
+      console.log('color:', parts[2]);
+      thisPlayer.object.material.color = new THREE.Color(parts[2]);
+      updateScoreCard(thisPlayer);
+      return;
+    }
     var player = findOrCreatePlayer(playerName);
     var now = new Date().getTime();
     if (messageType === 'c') {

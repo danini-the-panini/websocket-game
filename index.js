@@ -7,10 +7,29 @@ app.use(express.static('public'));
 const expressWs = require('express-ws')(app);
 
 const clients = [];
+const nameCounts = {};
 
 function clientForName(name) {
   for(let i = 0; i < clients.length; i++) {
     if (clients[i].name === name) return clients[i];
+  }
+}
+
+function normalizeName(name) {
+  console.log('Normalizing: [' + name + ']');
+  if (/[\,\<\>\\\/]/.test(name)) {
+    return "Dumbass!"
+  }
+  return name.substring(0, 10);
+}
+
+function getUniqueName(name) {
+  if (!nameCounts[name]) {
+    nameCounts[name] = 1;
+    return name;
+  } else {
+    nameCounts[name] ++;
+    return name + ' (' + nameCounts[name] + ')';
   }
 }
 
@@ -27,9 +46,11 @@ app.ws('/game', function(ws, req) {
     const parts = msg.split(',');
     const messageType = parts[0];
     if (messageType === 'c') {
-      client.name = parts[1];
-      client.color = parts[2];
+      client.givenName = normalizeName(msg.substring(2) || 'New Folder');
+      client.name = getUniqueName(client.givenName);
+      client.color = Math.floor(Math.random() * 0xFFFFFF);
       console.log('Client Connected: ' + client.name);
+      client.ws.send(client.name + ',n,#'+client.color.toString(16));
       clients.forEach(function(c) {
         if (c !== client && !c.disconnected) {
           try {
@@ -63,6 +84,7 @@ app.ws('/game', function(ws, req) {
   ws.on('close', function() {
     console.log('' + client.name + ' disconnected.');
     client.disconnected = true;
+    nameCounts[client.givenName]--;
     clients.forEach(function(c) {
       if (c !== client && !c.disconnected) {
         try { c.ws.send('' + client.name + ',d'); }
