@@ -47,7 +47,7 @@ $(function() {
   var velocity = new THREE.Vector3(0, 0, 0);
 
   function spawn() {
-    cube.position.set(-10 + Math.random() * 20, -5 + Math.random() * 10, 0);
+    cube.position.set(-40 + Math.random() * 80, -40 + Math.random() * 80, 0);
     cube.rotation.set(0, 0, Math.random() * 2 * Math.PI);
   }
 
