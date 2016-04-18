@@ -14,7 +14,7 @@ function clientForName(name) {
   }
 }
 
-const SPAWN_TIME = 5000;
+const SPAWN_TIME = 2000;
 
 app.ws('/game', function(ws, req) {
   const client = { ws: ws, kills: 0, deaths: 0 };

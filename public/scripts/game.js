@@ -1,5 +1,5 @@
 $(function() {
-  var name = prompt("Please enter your name");
+  var name = prompt("Please enter your name") || 'New Folder';
   const players = {};
 
   var windowWidth = window.innerWidth;
@@ -243,7 +243,7 @@ $(function() {
     }
   }
 
-  var SPAWN_TIME = 5000;
+  var SPAWN_TIME = 2000;
 
   function respawn() {
     thisPlayer.dead = false;
@@ -331,7 +331,7 @@ $(function() {
   }
 
   function formatSpawnTime(time) {
-    return ''+Math.ceil(time/1000);
+    return ''+time;
   }
 
   function startGame() {
