@@ -10,5 +10,16 @@
     <script src="https://code.jquery.com/jquery-2.2.3.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script>
     <script src="scripts/game.js"></script>
+    <canvas id="webgl_canvas"></canvas>
+    <div id="overlay">
+      <table id="scoreboard">
+        <thead><tr><th>Name</th><th>K</th><th>D</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div id="deathscreen" style="display: none">
+        <div id="deathmessage">You dead, bro!</div>
+        <div id="deathtimer">5<div>
+      </div>
+    </div>
   </body>
 </html>

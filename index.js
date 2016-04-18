@@ -24,10 +24,6 @@ app.ws('/game', function(ws, req) {
     if (client.disconnected) {
       return;
     }
-    if (client.dead) {
-      if (now - client.diedAt < SPAWN_TIME) return;
-      client.dead = false;
-    }
     const parts = msg.split(',');
     const messageType = parts[0];
     if (messageType === 'c') {
@@ -49,6 +45,11 @@ app.ws('/game', function(ws, req) {
         if (deadClient) {
           deadClient.deaths++;
           deadClient.dead = true;
+        }
+      } else if (messageType === 'p') {
+        if (client.dead) {
+          if (now - client.diedAt < SPAWN_TIME) return;
+          client.dead = false;
         }
       }
       clients.forEach(function(c) {

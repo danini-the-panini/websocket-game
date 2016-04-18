@@ -10,9 +10,9 @@ $(function() {
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera( 75, windowWidth/windowHeight, 0.1, 1000 );
 
-  var renderer = new THREE.WebGLRenderer();
+  var webGLCanvas = document.getElementById('webgl_canvas');
+  var renderer = new THREE.WebGLRenderer({ canvas: webGLCanvas });
   renderer.setSize(windowWidth, windowHeight);
-  document.body.appendChild( renderer.domElement );
 
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.BasicShadowMap;
@@ -86,10 +86,11 @@ $(function() {
     renderer.setSize( windowWidth, windowHeight );
   }, false );
 
-  var scoreboard = document.createElement('table');
-  scoreboard.innerHTML += '<thead><tr><th>Name</th><th>K</th><th>D</th></tr></thead>';
-  scoreboard.classList.add('scoreboard');
-  document.body.appendChild(scoreboard);
+  var overlay = document.getElementById('overlay');
+  var scoreboard = document.getElementById('scoreboard');
+  var scoreboardBody = scoreboard.getElementsByTagName('tbody')[0];
+  var deathscreen = document.getElementById('deathscreen');
+  var deathtimer = document.getElementById('deathtimer');
 
   function updateScoreCardColor(player) {
     var icon = player.scorecard.getElementsByClassName('icon')[0];
@@ -106,7 +107,7 @@ $(function() {
 
   function createScoreCard(player) {
     player.scorecard = document.createElement('tr');
-    scoreboard.appendChild(player.scorecard);
+    scoreboardBody.appendChild(player.scorecard);
     updateScoreCard(player);
   }
 
@@ -200,7 +201,7 @@ $(function() {
         }
       }
     }
-    if (bullet.player && lineIntersects(bullet.object.position, oldPosition, thisPlayer.object)) {
+    if (!thisPlayer.dead && bullet.player && lineIntersects(bullet.object.position, oldPosition, thisPlayer.object)) {
       return true;
     }
     return false;
@@ -247,6 +248,8 @@ $(function() {
   function respawn() {
     thisPlayer.dead = false;
     thisPlayer.object.visible = true;
+    deathscreen.style.display = 'none';
+    overlay.style.background = 'rgba(0, 0, 0, 0)';
     spawn()
     sendPosition();
     for (var name in players) {
@@ -259,17 +262,17 @@ $(function() {
   }
 
   function killPlayer(victim, killer) {
+    if (!victim || victim.dead) return;
     killer.kills += 1;
     updateScoreCard(killer);
     victim.deaths += 1;
     updateScoreCard(victim);
     explode(victim);
-    if (victim === thisPlayer) {
-      thisPlayer.diedAt = new Date().getTime();
-    } else {
+    if (victim !== thisPlayer) {
       victim.label.style.display = 'none';
       victim.indicator.visible = false;
     }
+    victim.diedAt = new Date().getTime();
     victim.dead = true;
     victim.object.visible = false;
   }
@@ -311,7 +314,7 @@ $(function() {
       var label = document.createElement('span');
       label.classList.add('player-label');
       label.innerText = playerName;
-      document.body.appendChild(label);
+      overlay.appendChild(label);
       var playerIndicator = new THREE.Mesh(geometry, playerCube.material);
       scene.add(playerIndicator);
       playerIndicator.scale.set(0.2, 0.2, 0.2);
@@ -325,6 +328,10 @@ $(function() {
       createScoreCard(players[playerName]);
     }
     return players[playerName];
+  }
+
+  function formatSpawnTime(time) {
+    return ''+Math.ceil(time/1000);
   }
 
   function startGame() {
@@ -362,7 +369,9 @@ $(function() {
       var now = new Date().getTime();
 
       if (thisPlayer.dead) {
-        if (now - thisPlayer.diedAt > SPAWN_TIME) {
+        var timeSinceDeath = now - thisPlayer.diedAt;
+        deathtimer.innerText = formatSpawnTime(SPAWN_TIME - timeSinceDeath);
+        if (timeSinceDeath > SPAWN_TIME) {
           respawn();
         }
       } else {
@@ -447,6 +456,7 @@ $(function() {
     var playerName = parts[0];
     var messageType = parts[1];
     var player = findOrCreatePlayer(playerName);
+    var now = new Date().getTime();
     if (messageType === 'c') {
       player.object.material.color.set('#' + parts[2]);
       updateScoreCardColor(player);
@@ -454,15 +464,15 @@ $(function() {
       console.log("player disconnected:", playerName);
       scene.remove(player.object);
       scene.remove(player.indicator);
-      document.body.removeChild(player.label);
-      scoreboard.removeChild(player.scorecard);
+      overlay.removeChild(player.label);
+      scoreboardBody.removeChild(player.scorecard);
       delete players[playerName];
     } else if (messageType === 'p') {
       player.object.position.x = parseFloat(parts[2]);
       player.object.position.y = parseFloat(parts[3]);
       player.object.rotation.z = parseFloat(parts[4]);
 
-      if (player.dead) {
+      if (player.dead && (now - player.diedAt) > SPAWN_TIME) {
         player.object.visible = true;
         player.dead = false;
         player.label.style.display = 'inline-block';
@@ -479,6 +489,11 @@ $(function() {
       var killer = playerForName(playerName);
       var victim = playerForName(parts[2]);
       killPlayer(victim, killer);
+      if (victim === thisPlayer) {
+        overlay.style.background = 'rgba(0, 0, 0, 0.5)';
+        deathscreen.style.display = 'block';
+        deathtimer.innerText = formatSpawnTime(SPAWN_TIME);
+      }
     }
   };
   websocket.onerror = function(evt) {
