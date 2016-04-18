@@ -194,15 +194,7 @@ $(function() {
         if (lineIntersects(bullet.object.position, oldPosition, player.object)) {
           if (!bullet.player) {
             websocket.send('k,'+name);
-            thisPlayer.kills++;
-            player.deaths++;
-            updateScoreCard(thisPlayer);
-            updateScoreCard(player);
-            explode(player);
-            player.label.style.display = 'none';
-            player.indicator.visible = false;
-            player.dead = true;
-            player.object.visible = false;
+            killPlayer(player, thisPlayer);
           }
           return true;
         }
@@ -264,6 +256,22 @@ $(function() {
         updatePlayerLabel(player);
       }
     }
+  }
+
+  function killPlayer(victim, killer) {
+    killer.kills += 1;
+    updateScoreCard(killer);
+    victim.deaths += 1;
+    updateScoreCard(victim);
+    explode(victim);
+    if (victim === thisPlayer) {
+      thisPlayer.diedAt = new Date().getTime();
+    } else {
+      victim.label.style.display = 'none';
+      victim.indicator.visible = false;
+    }
+    victim.dead = true;
+    victim.object.visible = false;
   }
 
   function updatePlayerLabel(player) {
@@ -409,10 +417,12 @@ $(function() {
       for (var name in players) {
         if (players.hasOwnProperty(name)) {
           var player = players[name];
+          if (player.dead) continue;
           updatePlayerIndicator(player);
           updatePlayerLabel(player);
         }
       }
+
       renderer.render(scene, camera);
     };
 
@@ -468,21 +478,7 @@ $(function() {
       console.log(players);
       var killer = playerForName(playerName);
       var victim = playerForName(parts[2]);
-      killer.kills += 1;
-      updateScoreCard(killer);
-      if (victim) {
-        victim.deaths += 1;
-        updateScoreCard(victim);
-        explode(victim);
-        if (victim === thisPlayer) {
-          thisPlayer.diedAt = new Date().getTime();
-        } else {
-          victim.label.style.display = 'none';
-          victim.indicator.visible = false;
-        }
-        victim.dead = true;
-        victim.object.visible = false;
-      }
+      killPlayer(victim, killer);
     }
   };
   websocket.onerror = function(evt) {
