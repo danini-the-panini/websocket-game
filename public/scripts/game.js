@@ -465,7 +465,8 @@ $(function() {
     var player = findOrCreatePlayer(playerName);
     var now = new Date().getTime();
     if (messageType === 'c') {
-      player.object.material.color.set('#' + parts[2]);
+      console.log('color:', parts[2]);
+      player.object.material.color.set(parts[2]);
       updateScoreCardColor(player);
     } else if (messageType === 'd') {
       console.log("player disconnected:", playerName);

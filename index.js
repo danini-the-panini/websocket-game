@@ -48,9 +48,9 @@ app.ws('/game', function(ws, req) {
     if (messageType === 'c') {
       client.givenName = normalizeName(msg.substring(2) || 'New Folder');
       client.name = getUniqueName(client.givenName);
-      client.color = Math.floor(Math.random() * 0xFFFFFF);
+      client.color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
       console.log('Client Connected: ' + client.name);
-      client.ws.send(client.name + ',n,#'+client.color.toString(16));
+      client.ws.send(client.name + ',n,'+client.color.toString(16));
       clients.forEach(function(c) {
         if (c !== client && !c.disconnected) {
           try {
