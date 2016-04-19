@@ -91,6 +91,7 @@ $(function() {
   var scoreboardBody = scoreboard.getElementsByTagName('tbody')[0];
   var deathscreen = document.getElementById('deathscreen');
   var deathtimer = document.getElementById('deathtimer');
+  var deathmessage = document.getElementById('deathmessage');
 
   function updateScoreCardColor(player) {
     var icon = player.scorecard.getElementsByClassName('icon')[0];
@@ -300,7 +301,6 @@ $(function() {
 
   function findOrCreatePlayer(playerName, playerColor) {
     if (!players[playerName]) {
-      console.log("player connected:", playerName);
       var playerCube = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: 0x00ff00 } ) );
       var cube2 = new THREE.Mesh( geometry, playerCube.material );
       cube2.receiveShadow = true;
@@ -457,7 +457,6 @@ $(function() {
     var messageType = parts[1];
     if (messageType === 'n') {
       thisPlayer.name = name = playerName;
-      console.log('color:', parts[2]);
       thisPlayer.object.material.color = new THREE.Color(parts[2]);
       updateScoreCard(thisPlayer);
       return;
@@ -465,11 +464,9 @@ $(function() {
     var player = findOrCreatePlayer(playerName);
     var now = new Date().getTime();
     if (messageType === 'c') {
-      console.log('color:', parts[2]);
       player.object.material.color.set(parts[2]);
       updateScoreCardColor(player);
     } else if (messageType === 'd') {
-      console.log("player disconnected:", playerName);
       scene.remove(player.object);
       scene.remove(player.indicator);
       overlay.removeChild(player.label);
@@ -492,8 +489,6 @@ $(function() {
     } else if (messageType === 'f') {
       playerFired(player, parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]))
     } else if (messageType === 'k') {
-      console.log(playerName + ' killed ' + parts[2]);
-      console.log(players);
       var killer = playerForName(playerName);
       var victim = playerForName(parts[2]);
       killPlayer(victim, killer);
@@ -501,6 +496,7 @@ $(function() {
         overlay.style.background = 'rgba(0, 0, 0, 0.5)';
         deathscreen.style.display = 'block';
         deathtimer.innerText = formatSpawnTime(SPAWN_TIME);
+        deathmessage.innerText = '' + killer.name + ' killed you, bro!';
       }
     }
   };
