@@ -13,7 +13,7 @@ Install dependencies:
 
 Run Server
 
-    $ node index.js
+    $ npm start
 
 Join game by navigating to `http://localhost:3000`, type in your player name, and use arrow keys to move around.
 
