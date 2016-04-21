@@ -14,7 +14,8 @@ rollup.rollup({
   ]
 }).then((bundle) => {
   return bundle.generate({
-    exports: 'none'
+    exports: 'none',
+    format: 'cjs'
   });
 }).then((result) => {
   console.log(result.code);

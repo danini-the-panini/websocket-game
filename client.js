@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import THREE from 'three';
 
+import Player from './lib/player';
+
 $(function() {
   var name = prompt("Please enter your name") || 'New Folder';
   const players = {};
@@ -54,7 +56,9 @@ $(function() {
     cube.rotation.set(0, 0, Math.random() * 2 * Math.PI);
   }
 
-  var thisPlayer = { object: cube, name: name, kills: 0, deaths: 0 };
+  var thisPlayer = new Player();
+  thisPlayer.object = cube;
+  thisPlayer.name = name;
 
   var amLight = new THREE.AmbientLight( 0x404040 );
   scene.add( amLight );
@@ -302,33 +306,30 @@ $(function() {
     player.indicator.lookAt(player.object.position);
   }
 
-  function findOrCreatePlayer(playerName, playerColor) {
+  function findOrCreatePlayer(playerName) {
     if (!players[playerName]) {
-      var playerCube = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: 0x00ff00 } ) );
-      var cube2 = new THREE.Mesh( geometry, playerCube.material );
+      var player = new Player();
+      players[playerName] = player;
+      player.name = playerName;
+      player.object = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: 0x00ff00 } ) );
+      var cube2 = new THREE.Mesh( geometry, player.object.material );
       cube2.receiveShadow = true;
       cube2.castShadow = true;
       cube2.scale.set(0.5, 0.5, 0.5);
       cube2.position.set(0, 0.5, 0);
-      playerCube.add(cube2);
-      playerCube.receiveShadow = true;
-      playerCube.castShadow = true;
-      scene.add( playerCube );
-      var label = document.createElement('span');
-      label.classList.add('player-label');
-      label.innerText = playerName;
-      overlay.appendChild(label);
-      var playerIndicator = new THREE.Mesh(geometry, playerCube.material);
-      scene.add(playerIndicator);
-      playerIndicator.scale.set(0.2, 0.2, 0.2);
-      players[playerName] = {
-        object: playerCube,
-        indicator: playerIndicator,
-        label: label,
-        name: playerName,
-        kills: 0, deaths: 0 };
-      updatePlayerIndicator(players[playerName]);
-      createScoreCard(players[playerName]);
+      player.object.add(cube2);
+      player.object.receiveShadow = true;
+      player.object.castShadow = true;
+      scene.add( player.object );
+      player.label = document.createElement('span');
+      player.label.classList.add('player-label');
+      player.label.innerText = player.name;
+      overlay.appendChild(player.label);
+      player.indicator = new THREE.Mesh(geometry, player.object.material);
+      scene.add(player.indicator);
+      player.indicator.scale.set(0.2, 0.2, 0.2);
+      updatePlayerIndicator(player);
+      createScoreCard(player);
     }
     return players[playerName];
   }
