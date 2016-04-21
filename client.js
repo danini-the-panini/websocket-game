@@ -1,3 +1,6 @@
+import $ from 'jquery';
+import THREE from 'three';
+
 $(function() {
   var name = prompt("Please enter your name") || 'New Folder';
   const players = {};

@@ -3,6 +3,27 @@
 const express = require('express');
 const app = express();
 
+const rollup = require('rollup');
+const nodeResolve = require('rollup-plugin-node-resolve');
+const commonjs = require('rollup-plugin-commonjs');
+
+app.get('/client.js', (req, res) => {
+  rollup.rollup({
+    entry: './client.js',
+    plugins: [
+      nodeResolve(),
+      commonjs()
+    ]
+  }).then((bundle) => {
+    const result = bundle.generate({
+      exports: 'none'
+    });
+
+    res.set('Content-Type', 'text/javascript');
+    res.end(result.code);
+  });
+});
+
 app.use(express.static('public'));
 const expressWs = require('express-ws')(app);
 
