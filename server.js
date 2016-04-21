@@ -11,7 +11,6 @@ import THREE from 'three';
   const commonjs = require('rollup-plugin-commonjs');
 
   app.get('/client.js', (req, res, next) => {
-    console.log('Bundling client.js');
     rollup.rollup({
       entry: './client.js',
       plugins: [
@@ -19,11 +18,10 @@ import THREE from 'three';
         commonjs()
       ]
     }).then((bundle) => {
-      console.log('Generating client.js');
-      const result = bundle.generate({
+      return bundle.generate({
         exports: 'none'
       });
-
+    }).then((result) => {
       res.set('Content-Type', 'text/javascript');
       res.end(result.code);
     }).catch((error) => {
@@ -77,7 +75,7 @@ import THREE from 'three';
       if (messageType === 'c') {
         client.givenName = normalizeName(msg.substring(2) || 'New Folder');
         client.name = getUniqueName(client.givenName);
-        client.color = '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
+        client.color = '#' + new THREE.Color(Math.random() * 0xFFFFFF).getHexString();
         console.log('Client Connected: ' + client.name);
         client.ws.send(client.name + ',n,'+client.color.toString(16));
         clients.forEach(function(c) {
