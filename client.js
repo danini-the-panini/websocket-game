@@ -1,5 +1,12 @@
+/* eslint-env browser */
+
+import $ from "jquery";
+import THREE from "three";
+
+import ClientPlayer from "./lib/clientPlayer";
+
 $(function() {
-  var name = prompt("Please enter your name") || 'New Folder';
+  var name = prompt("Please enter your name") || "New Folder";
   const players = {};
 
   var windowWidth = window.innerWidth;
@@ -10,15 +17,15 @@ $(function() {
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera( 75, windowWidth/windowHeight, 0.1, 1000 );
 
-  var webGLCanvas = document.getElementById('webgl_canvas');
+  var webGLCanvas = document.getElementById("webgl_canvas");
   var renderer = new THREE.WebGLRenderer({ canvas: webGLCanvas });
   renderer.setSize(windowWidth, windowHeight);
 
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.BasicShadowMap;
 
-  var geometry = new THREE.BoxGeometry( 100, 100, 1 );
-  var texture = new THREE.TextureLoader().load( "images/floor.png" );
+  var geometry = new THREE.BoxGeometry(100, 100, 1);
+  var texture = new THREE.TextureLoader().load("images/floor.png");
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set( 20, 20 );
@@ -28,30 +35,19 @@ $(function() {
   floor.position.z = -0.5;
   scene.add( floor );
 
-  geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
-  var cube = new THREE.Mesh( geometry, material );
-  var cube2 = new THREE.Mesh( geometry, material );
-  cube.receiveShadow = true;
-  cube.castShadow = true;
-  cube2.receiveShadow = true;
-  cube2.castShadow = true;
-  cube2.scale.set(0.5, 0.5, 0.5);
-  cube2.position.set(0, 0.5, 0);
-  cube.add(cube2);
-  scene.add( cube );
-
   var MAX_SPEED = 0.2;
   var ACCELERATION = 0.005;
   var DAMPENING = 0.99;
   var velocity = new THREE.Vector3(0, 0, 0);
 
-  function spawn() {
-    cube.position.set(-40 + Math.random() * 80, -40 + Math.random() * 80, 0);
-    cube.rotation.set(0, 0, Math.random() * 2 * Math.PI);
-  }
+  var thisPlayer = new ClientPlayer();
+  scene.add(thisPlayer.object);
+  thisPlayer.name = name;
 
-  var thisPlayer = { object: cube, name: name, kills: 0, deaths: 0 };
+  function spawn() {
+    thisPlayer.object.position.set(-40 + Math.random() * 80, -40 + Math.random() * 80, 0);
+    thisPlayer.object.rotation.set(0, 0, Math.random() * 2 * Math.PI);
+  }
 
   var amLight = new THREE.AmbientLight( 0x404040 );
   scene.add( amLight );
@@ -66,16 +62,16 @@ $(function() {
   light.shadow.camera.top = 10;
   light.shadow.camera.bottom = -10;
   light.position.set(10, 5, 30);
-  light.lookAt(cube.position);
-  light.target = cube;
+  light.lookAt(thisPlayer.object.position);
+  light.target = thisPlayer.object;
   scene.add( light );
   // scene.add(new THREE.CameraHelper( light.shadow.camera ));
 
   camera.position.z = 10;
-  camera.lookAt(cube.position);
-  camera.target = cube;
+  camera.lookAt(thisPlayer.object.position);
+  camera.target = thisPlayer.object;
 
-  window.addEventListener( 'resize', function(){
+  window.addEventListener("resize", function(){
     windowWidth = window.innerWidth;
     windowHeight = window.innerHeight;
     widthHalf = windowWidth/2;
@@ -86,28 +82,29 @@ $(function() {
     renderer.setSize( windowWidth, windowHeight );
   }, false );
 
-  var overlay = document.getElementById('overlay');
-  var scoreboard = document.getElementById('scoreboard');
-  var scoreboardBody = scoreboard.getElementsByTagName('tbody')[0];
-  var deathscreen = document.getElementById('deathscreen');
-  var deathtimer = document.getElementById('deathtimer');
-  var deathmessage = document.getElementById('deathmessage');
+  var overlay = document.getElementById("overlay");
+  var scoreboard = document.getElementById("scoreboard");
+  var scoreboardBody = scoreboard.getElementsByTagName("tbody")[0];
+  var deathscreen = document.getElementById("deathscreen");
+  var deathtimer = document.getElementById("deathtimer");
+  var deathmessage = document.getElementById("deathmessage");
 
   function updateScoreCardColor(player) {
-    var icon = player.scorecard.getElementsByClassName('icon')[0];
-    icon.style.backgroundColor = '#' + player.object.material.color.getHexString();
+    var icon = player.scorecard.getElementsByClassName("icon")[0];
+    icon.style.backgroundColor = `#${player.object.material.color.getHexString()}`;
   }
 
   function updateScoreCard(player) {
-    player.scorecard.innerHTML = '' +
-      '<td><span class="icon"></span><span>' + player.name + '</span></td>' +
-      '<td>' + player.kills + '</td>' +
-      '<td>' + player.deaths + '</td>';
+    player.scorecard.innerHTML = `
+      <td><span class="icon"></span><span>${player.name}</span></td>
+      <td>${player.kills}</td>
+      <td>${player.deaths}</td>
+    `;
     updateScoreCardColor(player);
   }
 
   function createScoreCard(player) {
-    player.scorecard = document.createElement('tr');
+    player.scorecard = document.createElement("tr");
     scoreboardBody.appendChild(player.scorecard);
     updateScoreCard(player);
   }
@@ -119,12 +116,12 @@ $(function() {
   var lightOffset = new THREE.Vector3(10, 5, 30);
 
   function sendPosition() {
-    camera.position.copy(cube.position).add(cameraOffset);
-    light.position.copy(cube.position).add(lightOffset);
+    camera.position.copy(thisPlayer.object.position).add(cameraOffset);
+    light.position.copy(thisPlayer.object.position).add(lightOffset);
 
     light.updateMatrix();
     light.updateMatrixWorld();
-    websocket.send('p,' + cube.position.x + ',' + cube.position.y + ',' + cube.rotation.z);
+    websocket.send(`p,${thisPlayer.object.position.x},${thisPlayer.object.position.y},${thisPlayer.object.rotation.z}`);
   }
 
   var bullets = [];
@@ -158,27 +155,26 @@ $(function() {
     var now = new Date().getTime();
     if (now - lastFire > FIRE_TIME) {
       var bullet = getBullet();
-      bullet.object.position.copy(cube.position);
-      bullet.object.rotation.copy(cube.rotation);
+      bullet.object.position.copy(thisPlayer.object.position);
+      bullet.object.rotation.copy(thisPlayer.object.rotation);
       bullet.player = null;
       bullet.firedAt = now;
       lastFire = now;
 
-      websocket.send('f,' + bullet.object.position.x + ',' + bullet.object.position.y + ',' + bullet.object.rotation.z);
+      websocket.send(`f,${bullet.object.position.x},${bullet.object.position.y},${bullet.object.rotation.z}`);
     }
   }
 
   function playerFired(player, x, y, rot) {
     var bullet = getBullet();
 
-    bullet.object.position.set(x, y, 0)
+    bullet.object.position.set(x, y, 0);
     bullet.object.rotation.set(0, 0, rot);
     bullet.player = player;
     bullet.firedAt = new Date().getTime();
   }
 
   var vectorA = new THREE.Vector3();
-  var vectorB = new THREE.Vector3();
   function lineIntersects(a, b, object) {
     var aToB = vectorA.copy(b).sub(a);
     var ray1 = new THREE.Ray(a, aToB);
@@ -195,7 +191,7 @@ $(function() {
         if (player === bullet.player || player.dead) continue;
         if (lineIntersects(bullet.object.position, oldPosition, player.object)) {
           if (!bullet.player) {
-            websocket.send('k,'+name);
+            websocket.send(`k,${name}`);
             killPlayer(player, thisPlayer);
           }
           return true;
@@ -249,9 +245,9 @@ $(function() {
   function respawn() {
     thisPlayer.dead = false;
     thisPlayer.object.visible = true;
-    deathscreen.style.display = 'none';
-    overlay.style.background = 'rgba(0, 0, 0, 0)';
-    spawn()
+    deathscreen.style.display = "none";
+    overlay.style.background = "rgba(0, 0, 0, 0)";
+    spawn();
     sendPosition();
     for (var name in players) {
       if (players.hasOwnProperty(name)) {
@@ -270,7 +266,7 @@ $(function() {
     updateScoreCard(victim);
     explode(victim);
     if (victim !== thisPlayer) {
-      victim.label.style.display = 'none';
+      victim.label.style.display = "none";
       victim.indicator.visible = false;
     }
     victim.diedAt = new Date().getTime();
@@ -285,8 +281,8 @@ $(function() {
     vector.x = ( vector.x * widthHalf ) + widthHalf;
     vector.y = - ( vector.y * heightHalf ) + heightHalf;
 
-    player.label.style.left = '' + vector.x + 'px';
-    player.label.style.top = '' + vector.y + 'px';
+    player.label.style.left = `${vector.x}px`;
+    player.label.style.top = `${vector.y}px`;
   }
 
   var indVector = new THREE.Vector3();
@@ -299,48 +295,32 @@ $(function() {
     player.indicator.lookAt(player.object.position);
   }
 
-  function findOrCreatePlayer(playerName, playerColor) {
+  var indicatorGeometry = new THREE.BoxGeometry(1, 1, 1);
+  function findOrCreatePlayer(playerName) {
     if (!players[playerName]) {
-      var playerCube = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: 0x00ff00 } ) );
-      var cube2 = new THREE.Mesh( geometry, playerCube.material );
-      cube2.receiveShadow = true;
-      cube2.castShadow = true;
-      cube2.scale.set(0.5, 0.5, 0.5);
-      cube2.position.set(0, 0.5, 0);
-      playerCube.add(cube2);
-      playerCube.receiveShadow = true;
-      playerCube.castShadow = true;
-      scene.add( playerCube );
-      var label = document.createElement('span');
-      label.classList.add('player-label');
-      label.innerText = playerName;
-      overlay.appendChild(label);
-      var playerIndicator = new THREE.Mesh(geometry, playerCube.material);
-      scene.add(playerIndicator);
-      playerIndicator.scale.set(0.2, 0.2, 0.2);
-      players[playerName] = {
-        object: playerCube,
-        indicator: playerIndicator,
-        label: label,
-        name: playerName,
-        kills: 0, deaths: 0 };
-      updatePlayerIndicator(players[playerName]);
-      createScoreCard(players[playerName]);
+      var player = new ClientPlayer();
+      players[playerName] = player;
+      player.name = playerName;
+      scene.add(player.object);
+      player.label = document.createElement("span");
+      player.label.classList.add("player-label");
+      player.label.innerText = player.name;
+      overlay.appendChild(player.label);
+      player.indicator = new THREE.Mesh(indicatorGeometry, player.object.material);
+      scene.add(player.indicator);
+      player.indicator.scale.set(0.2, 0.2, 0.2);
+      updatePlayerIndicator(player);
+      createScoreCard(player);
     }
     return players[playerName];
   }
 
   function formatSpawnTime(time) {
-    return ''+time;
+    return time.toString();
   }
 
   function startGame() {
     spawn();
-
-    var isDragging = false;
-    var previousMousePosition = new THREE.Vector2(0, 0);
-    var deltaMove = new THREE.Vector2(0, 0);
-    var cameraMousePosition = new THREE.Vector3();
 
     var RIGHT = 37;
     var UP = 38;
@@ -350,17 +330,16 @@ $(function() {
 
     var keystates = {};
 
-    $(document).on('keydown', function(e) {
+    $(document).on("keydown", function(e) {
       keystates[e.keyCode] = true;
       e.preventDefault();
-    }).on('keyup', function(e) {
+    }).on("keyup", function(e) {
       keystates[e.keyCode] = false;
       e.preventDefault();
     });
 
-    $(document).on('mouseup', function(e) {
-        isDragging = false;
-        e.preventDefault();
+    $(document).on("mouseup", function(e) {
+      e.preventDefault();
     });
 
     var render = function () {
@@ -376,9 +355,9 @@ $(function() {
         }
       } else {
         if(keystates[UP]) {
-          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(ACCELERATION));
+          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(thisPlayer.object.quaternion).normalize().multiplyScalar(ACCELERATION));
         } else if (keystates[DOWN]) {
-          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(-ACCELERATION));
+          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(thisPlayer.object.quaternion).normalize().multiplyScalar(-ACCELERATION));
         } else {
           velocity.multiplyScalar(DAMPENING);
         }
@@ -386,15 +365,15 @@ $(function() {
           velocity.setLength(MAX_SPEED);
         }
         if(keystates[LEFT]) {
-          cube.rotation.z -= 0.1;
+          thisPlayer.object.rotation.z -= 0.1;
         } else if (keystates[RIGHT]) {
-          cube.rotation.z += 0.1;
+          thisPlayer.object.rotation.z += 0.1;
         }
         if(keystates[SPACE]) {
           fireGun();
         }
 
-        cube.position.add(velocity);
+        thisPlayer.object.position.add(velocity);
 
         sendPosition();
       }
@@ -443,19 +422,19 @@ $(function() {
     return players[playerName];
   }
 
-  var websocket = new WebSocket('ws://' + window.location.host + '/game');
-  websocket.onopen = function(evt) {
-    websocket.send('c,'+name)
+  var websocket = new WebSocket(`ws://${window.location.host}/game`);
+  websocket.onopen = function() {
+    websocket.send(`c,${name}`);
     startGame();
   };
-  websocket.onclose = function(evt) {
+  websocket.onclose = function() {
 
   };
   websocket.onmessage = function(evt) {
-    var parts = evt.data.split(',');
+    var parts = evt.data.split(",");
     var playerName = parts[0];
     var messageType = parts[1];
-    if (messageType === 'n') {
+    if (messageType === "n") {
       thisPlayer.name = name = playerName;
       thisPlayer.object.material.color = new THREE.Color(parts[2]);
       updateScoreCard(thisPlayer);
@@ -463,16 +442,16 @@ $(function() {
     }
     var player = findOrCreatePlayer(playerName);
     var now = new Date().getTime();
-    if (messageType === 'c') {
+    if (messageType === "c") {
       player.object.material.color.set(parts[2]);
       updateScoreCardColor(player);
-    } else if (messageType === 'd') {
+    } else if (messageType === "d") {
       scene.remove(player.object);
       scene.remove(player.indicator);
       overlay.removeChild(player.label);
       scoreboardBody.removeChild(player.scorecard);
       delete players[playerName];
-    } else if (messageType === 'p') {
+    } else if (messageType === "p") {
       player.object.position.x = parseFloat(parts[2]);
       player.object.position.y = parseFloat(parts[3]);
       player.object.rotation.z = parseFloat(parts[4]);
@@ -480,27 +459,27 @@ $(function() {
       if (player.dead && (now - player.diedAt) > SPAWN_TIME) {
         player.object.visible = true;
         player.dead = false;
-        player.label.style.display = 'inline-block';
+        player.label.style.display = "inline-block";
         player.indicator.visible = true;
       }
 
       updatePlayerLabel(player);
       updatePlayerIndicator(player);
-    } else if (messageType === 'f') {
-      playerFired(player, parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]))
-    } else if (messageType === 'k') {
+    } else if (messageType === "f") {
+      playerFired(player, parseFloat(parts[2]), parseFloat(parts[3]), parseFloat(parts[4]));
+    } else if (messageType === "k") {
       var killer = playerForName(playerName);
       var victim = playerForName(parts[2]);
       killPlayer(victim, killer);
       if (victim === thisPlayer) {
-        overlay.style.background = 'rgba(0, 0, 0, 0.5)';
-        deathscreen.style.display = 'block';
+        overlay.style.background = "rgba(0, 0, 0, 0.5)";
+        deathscreen.style.display = "block";
         deathtimer.innerText = formatSpawnTime(SPAWN_TIME);
-        deathmessage.innerText = '' + killer.name + ' killed you, bro!';
+        deathmessage.innerText = `${killer.name} killed you, bro!`;
       }
     }
   };
-  websocket.onerror = function(evt) {
+  websocket.onerror = function() {
 
   };
 });

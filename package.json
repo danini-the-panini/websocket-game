@@ -2,14 +2,26 @@
   "name": "game",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "./node_modules/.bin/rollup -c | node"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "compression": "^1.6.1",
     "express": "^4.13.4",
-    "express-ws": "^2.0.0-beta"
+    "express-ws": "^2.0.0-beta",
+    "jquery": "^2.2.3",
+    "three": "^0.76.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015-rollup": "^1.1.1",
+    "eslint": "^2.8.0",
+    "rollup": "^0.25.8",
+    "rollup-plugin-babel": "^2.4.0",
+    "rollup-plugin-commonjs": "^2.2.1",
+    "rollup-plugin-node-resolve": "^1.5.0"
   }
 }
