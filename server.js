@@ -2,12 +2,16 @@ import THREE from 'three';
 import Player from './lib/player';
 
 const express = require('express');
-const app = express();
+const expressWs = require('express-ws');
+const compression = require('compression');
 
 const rollup = require('rollup');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
+
+const app = express();
+app.use(compression());
 
 app.get('/client.js', (req, res, next) => {
   rollup.rollup({
@@ -34,7 +38,6 @@ app.get('/client.js', (req, res, next) => {
 });
 
 app.use(express.static('public'));
-const expressWs = require('express-ws')(app);
 
 const clients = [];
 const nameCounts = {};
@@ -65,6 +68,7 @@ function getUniqueName(name) {
 
 const SPAWN_TIME = 2000;
 
+expressWs(app);
 app.ws('/game', function(ws, req) {
   const client = new Player();
   client.ws = ws;
