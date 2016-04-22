@@ -1,35 +1,37 @@
-import THREE from 'three';
-import Player from './lib/player';
+/* eslint-env node */
+/* eslint-disable no-console */
 
-const express = require('express');
-const expressWs = require('express-ws');
-const compression = require('compression');
+import Player from "./lib/player";
 
-const rollup = require('rollup');
-const nodeResolve = require('rollup-plugin-node-resolve');
-const commonjs = require('rollup-plugin-commonjs');
-const babel = require('rollup-plugin-babel');
+const express = require("express");
+const expressWs = require("express-ws");
+const compression = require("compression");
+
+const rollup = require("rollup");
+const nodeResolve = require("rollup-plugin-node-resolve");
+const commonjs = require("rollup-plugin-commonjs");
+const babel = require("rollup-plugin-babel");
 
 const app = express();
 app.use(compression());
 
-app.get('/client.js', (req, res, next) => {
+app.get("/client.js", (req, res, next) => {
   rollup.rollup({
-    entry: './client.js',
+    entry: "./client.js",
     plugins: [
       nodeResolve(),
       commonjs(),
       babel({
-        exclude: 'node_modules/**',
-        presets: ['es2015-rollup']
+        exclude: "node_modules/**",
+        presets: ["es2015-rollup"]
       })
     ]
   }).then((bundle) => {
     return bundle.generate({
-      exports: 'none'
+      exports: "none"
     });
   }).then((result) => {
-    res.set('Content-Type', 'text/javascript');
+    res.set("Content-Type", "text/javascript");
     res.end(result.code);
   }).catch((error) => {
     console.error(error.stack);
@@ -37,7 +39,7 @@ app.get('/client.js', (req, res, next) => {
   });
 });
 
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 const clients = [];
 const nameCounts = {};
@@ -49,9 +51,9 @@ function clientForName(name) {
 }
 
 function normalizeName(name) {
-  console.log('Normalizing: [' + name + ']');
+  console.log(`Normalizing: [${name}]`);
   if (/[\,\<\>\\\/]/.test(name)) {
-    return "Dumbass!"
+    return "Dumbass!";
   }
   return name.substring(0, 10);
 }
@@ -62,46 +64,46 @@ function getUniqueName(name) {
     return name;
   } else {
     nameCounts[name] ++;
-    return name + ' (' + nameCounts[name] + ')';
+    return `${name} (${nameCounts[name]})`;
   }
 }
 
 const SPAWN_TIME = 2000;
 
 expressWs(app);
-app.ws('/game', function(ws, req) {
+app.ws("/game", function(ws) {
   const client = new Player();
   client.ws = ws;
   clients.push(client);
-  ws.on('message', function(msg) {
+  ws.on("message", function(msg) {
     const now = new Date().getTime();
     if (client.disconnected) {
       return;
     }
-    const parts = msg.split(',');
+    const parts = msg.split(",");
     const messageType = parts[0];
-    if (messageType === 'c') {
-      client.givenName = normalizeName(msg.substring(2) || 'New Folder');
+    if (messageType === "c") {
+      client.givenName = normalizeName(msg.substring(2) || "New Folder");
       client.name = getUniqueName(client.givenName);
-      console.log('Client Connected: ' + client.name);
-      client.ws.send(client.name + ',n,#'+client.color.getHexString());
+      console.log(`Client Connected: ${client.name}`);
+      client.ws.send(`${client.name},n,#${client.color.getHexString()}`);
       clients.forEach(function(c) {
         if (c !== client && !c.disconnected) {
           try {
-            c.ws.send(client.name+',c,#'+client.color.getHexString());
-            client.ws.send(c.name+',c,#'+c.color.getHexString());
+            c.ws.send(`${client.name},c,#${client.color.getHexString()}`);
+            client.ws.send(`${c.name},c,#${c.color.getHexString()}`);
           } catch (e) {console.error(e);}
         }
       });
     } else {
-      if (messageType === 'k') {
+      if (messageType === "k") {
         client.kills++;
         const deadClient = clientForName(parts[1]);
         if (deadClient) {
           deadClient.deaths++;
           deadClient.dead = true;
         }
-      } else if (messageType === 'p') {
+      } else if (messageType === "p") {
         if (client.dead) {
           if (now - client.diedAt < SPAWN_TIME) return;
           client.dead = false;
@@ -109,31 +111,31 @@ app.ws('/game', function(ws, req) {
       }
       clients.forEach(function(c) {
         if (c !== client && !c.disconnected) {
-          try { c.ws.send('' + client.name + ',' + msg); }
+          try { c.ws.send(`${client.name},${msg}`); }
           catch (e) {console.error(e);}
         }
       });
     }
   });
-  ws.on('close', function() {
-    console.log('' + client.name + ' disconnected.');
+  ws.on("close", function() {
+    console.log(`${client.name} disconnected.`);
     client.disconnected = true;
     nameCounts[client.givenName]--;
     clients.forEach(function(c) {
       if (c !== client && !c.disconnected) {
-        try { c.ws.send('' + client.name + ',d'); }
+        try { c.ws.send(`${client.name},d`); }
         catch (e) {console.error(e);}
       }
     });
     for(let i = clients.length - 1; i >= 0; i--) {
       if(clients[i] === client) {
-         clients.splice(i, 1);
-         return;
+        clients.splice(i, 1);
+        return;
       }
     }
   });
 });
 
 app.listen(3000, () => {
-  console.log('Server started.');
+  console.log("Server started.");
 });
