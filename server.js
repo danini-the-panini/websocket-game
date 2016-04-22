@@ -7,13 +7,18 @@ const app = express();
 const rollup = require('rollup');
 const nodeResolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
+const babel = require('rollup-plugin-babel');
 
 app.get('/client.js', (req, res, next) => {
   rollup.rollup({
     entry: './client.js',
     plugins: [
       nodeResolve(),
-      commonjs()
+      commonjs(),
+      babel({
+        exclude: 'node_modules/**',
+        presets: ['es2015-rollup']
+      })
     ]
   }).then((bundle) => {
     return bundle.generate({
