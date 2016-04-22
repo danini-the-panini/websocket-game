@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import THREE from 'three';
 
-import Player from './lib/player';
+import ClientPlayer from './lib/clientPlayer';
 
 $(function() {
   var name = prompt("Please enter your name") || 'New Folder';
@@ -33,32 +33,19 @@ $(function() {
   floor.position.z = -0.5;
   scene.add( floor );
 
-  geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  material = new THREE.MeshPhongMaterial({ color: Math.random() * 0xffffff });
-  var cube = new THREE.Mesh( geometry, material );
-  var cube2 = new THREE.Mesh( geometry, material );
-  cube.receiveShadow = true;
-  cube.castShadow = true;
-  cube2.receiveShadow = true;
-  cube2.castShadow = true;
-  cube2.scale.set(0.5, 0.5, 0.5);
-  cube2.position.set(0, 0.5, 0);
-  cube.add(cube2);
-  scene.add( cube );
-
   var MAX_SPEED = 0.2;
   var ACCELERATION = 0.005;
   var DAMPENING = 0.99;
   var velocity = new THREE.Vector3(0, 0, 0);
 
-  function spawn() {
-    cube.position.set(-40 + Math.random() * 80, -40 + Math.random() * 80, 0);
-    cube.rotation.set(0, 0, Math.random() * 2 * Math.PI);
-  }
-
-  var thisPlayer = new Player();
-  thisPlayer.object = cube;
+  var thisPlayer = new ClientPlayer();
+  scene.add(thisPlayer.object);
   thisPlayer.name = name;
+
+  function spawn() {
+    thisPlayer.object.position.set(-40 + Math.random() * 80, -40 + Math.random() * 80, 0);
+    thisPlayer.object.rotation.set(0, 0, Math.random() * 2 * Math.PI);
+  }
 
   var amLight = new THREE.AmbientLight( 0x404040 );
   scene.add( amLight );
@@ -73,14 +60,14 @@ $(function() {
   light.shadow.camera.top = 10;
   light.shadow.camera.bottom = -10;
   light.position.set(10, 5, 30);
-  light.lookAt(cube.position);
-  light.target = cube;
+  light.lookAt(thisPlayer.object.position);
+  light.target = thisPlayer.object;
   scene.add( light );
   // scene.add(new THREE.CameraHelper( light.shadow.camera ));
 
   camera.position.z = 10;
-  camera.lookAt(cube.position);
-  camera.target = cube;
+  camera.lookAt(thisPlayer.object.position);
+  camera.target = thisPlayer.object;
 
   window.addEventListener( 'resize', function(){
     windowWidth = window.innerWidth;
@@ -126,12 +113,12 @@ $(function() {
   var lightOffset = new THREE.Vector3(10, 5, 30);
 
   function sendPosition() {
-    camera.position.copy(cube.position).add(cameraOffset);
-    light.position.copy(cube.position).add(lightOffset);
+    camera.position.copy(thisPlayer.object.position).add(cameraOffset);
+    light.position.copy(thisPlayer.object.position).add(lightOffset);
 
     light.updateMatrix();
     light.updateMatrixWorld();
-    websocket.send('p,' + cube.position.x + ',' + cube.position.y + ',' + cube.rotation.z);
+    websocket.send('p,' + thisPlayer.object.position.x + ',' + thisPlayer.object.position.y + ',' + thisPlayer.object.rotation.z);
   }
 
   var bullets = [];
@@ -165,8 +152,8 @@ $(function() {
     var now = new Date().getTime();
     if (now - lastFire > FIRE_TIME) {
       var bullet = getBullet();
-      bullet.object.position.copy(cube.position);
-      bullet.object.rotation.copy(cube.rotation);
+      bullet.object.position.copy(thisPlayer.object.position);
+      bullet.object.rotation.copy(thisPlayer.object.rotation);
       bullet.player = null;
       bullet.firedAt = now;
       lastFire = now;
@@ -306,26 +293,18 @@ $(function() {
     player.indicator.lookAt(player.object.position);
   }
 
+  var indicatorGeometry = new THREE.BoxGeometry(1, 1, 1);
   function findOrCreatePlayer(playerName) {
     if (!players[playerName]) {
-      var player = new Player();
+      var player = new ClientPlayer();
       players[playerName] = player;
       player.name = playerName;
-      player.object = new THREE.Mesh( geometry, new THREE.MeshPhongMaterial( { color: 0x00ff00 } ) );
-      var cube2 = new THREE.Mesh( geometry, player.object.material );
-      cube2.receiveShadow = true;
-      cube2.castShadow = true;
-      cube2.scale.set(0.5, 0.5, 0.5);
-      cube2.position.set(0, 0.5, 0);
-      player.object.add(cube2);
-      player.object.receiveShadow = true;
-      player.object.castShadow = true;
-      scene.add( player.object );
+      scene.add(player.object);
       player.label = document.createElement('span');
       player.label.classList.add('player-label');
       player.label.innerText = player.name;
       overlay.appendChild(player.label);
-      player.indicator = new THREE.Mesh(geometry, player.object.material);
+      player.indicator = new THREE.Mesh(indicatorGeometry, player.object.material);
       scene.add(player.indicator);
       player.indicator.scale.set(0.2, 0.2, 0.2);
       updatePlayerIndicator(player);
@@ -380,9 +359,9 @@ $(function() {
         }
       } else {
         if(keystates[UP]) {
-          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(ACCELERATION));
+          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(thisPlayer.object.quaternion).normalize().multiplyScalar(ACCELERATION));
         } else if (keystates[DOWN]) {
-          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(cube.quaternion).normalize().multiplyScalar(-ACCELERATION));
+          velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(thisPlayer.object.quaternion).normalize().multiplyScalar(-ACCELERATION));
         } else {
           velocity.multiplyScalar(DAMPENING);
         }
@@ -390,15 +369,15 @@ $(function() {
           velocity.setLength(MAX_SPEED);
         }
         if(keystates[LEFT]) {
-          cube.rotation.z -= 0.1;
+          thisPlayer.object.rotation.z -= 0.1;
         } else if (keystates[RIGHT]) {
-          cube.rotation.z += 0.1;
+          thisPlayer.object.rotation.z += 0.1;
         }
         if(keystates[SPACE]) {
           fireGun();
         }
 
-        cube.position.add(velocity);
+        thisPlayer.object.position.add(velocity);
 
         sendPosition();
       }
