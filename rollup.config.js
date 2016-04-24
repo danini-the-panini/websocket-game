@@ -1,13 +1,14 @@
-import nodeResolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import nodeResolve from "rollup-plugin-node-resolve";
+import commonjs from "rollup-plugin-commonjs";
 
 export default {
-  entry: './server.js',
+  entry: "./server.js",
   plugins: [
     nodeResolve(),
     commonjs({
-      exclude: './server.js'
+      exclude: "./server.js"
     })
   ],
-  format: 'cjs'
+  format: "cjs",
+  sourceMap: true
 };
