@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/.bin/rollup -c -o dist/server.js && node dist/server.js"
+    "build-server": "./node_modules/.bin/rollup -c rollup.config.server.js -o dist/server.js",
+    "build-client": "./node_modules/.bin/rollup -c rollup.config.client.js -o public/scripts/client.js",
+    "build": "npm run build-server & npm run build-client",
+    "start": "npm run build && node dist/server.js"
   },
   "author": "",
   "license": "ISC",

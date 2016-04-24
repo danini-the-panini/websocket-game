@@ -7,38 +7,9 @@ const express = require("express");
 const expressWs = require("express-ws");
 const compression = require("compression");
 
-const rollup = require("rollup");
-const nodeResolve = require("rollup-plugin-node-resolve");
-const commonjs = require("rollup-plugin-commonjs");
-const babel = require("rollup-plugin-babel");
-
 const app = express();
+
 app.use(compression());
-
-app.get("/client.js", (req, res, next) => {
-  rollup.rollup({
-    entry: "./client.js",
-    plugins: [
-      nodeResolve(),
-      commonjs(),
-      babel({
-        exclude: "node_modules/**",
-        presets: ["es2015-rollup"]
-      })
-    ]
-  }).then((bundle) => {
-    return bundle.generate({
-      exports: "none"
-    });
-  }).then((result) => {
-    res.set("Content-Type", "text/javascript");
-    res.end(result.code);
-  }).catch((error) => {
-    console.error(error.stack);
-    next(error);
-  });
-});
-
 app.use(express.static("public"));
 
 const clients = [];
