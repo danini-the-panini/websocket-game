@@ -330,18 +330,6 @@ $(function() {
 
     var keystates = {};
 
-    $(document).on("keydown", function(e) {
-      keystates[e.keyCode] = true;
-      e.preventDefault();
-    }).on("keyup", function(e) {
-      keystates[e.keyCode] = false;
-      e.preventDefault();
-    });
-
-    $(document).on("mouseup", function(e) {
-      e.preventDefault();
-    });
-
     var render = function () {
       requestAnimationFrame( render );
 

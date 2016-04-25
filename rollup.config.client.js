@@ -3,15 +3,16 @@ import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
 
 export default {
-  entry: "./client.js",
+  entry: "./src/client.js",
   plugins: [
     nodeResolve(),
     commonjs({
-      exclude: "./client.js"
+      exclude: "./src/client.js"
     }),
     babel({
       exclude: "node_modules/**",
-      presets: ["es2015-rollup"]
+      presets: ["es2015-rollup"],
+      babelrc: false
     })
   ],
   format: "cjs"

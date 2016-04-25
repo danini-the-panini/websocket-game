@@ -2,13 +2,14 @@ import nodeResolve from "rollup-plugin-node-resolve";
 import commonjs from "rollup-plugin-commonjs";
 
 export default {
-  entry: "./server.js",
+  entry: "./src/server.js",
   plugins: [
     nodeResolve(),
     commonjs({
-      exclude: "./server.js"
+      exclude: "./src/server.js"
     })
   ],
   format: "cjs",
-  sourceMap: true
+  sourceMap: true,
+  intro: "require('source-map-support').install();"
 };
