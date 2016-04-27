@@ -10,6 +10,7 @@ const DOWN = 40;
 const MAX_SPEED = 0.012;
 const ACCELERATION = 0.0003;
 const DAMPENING = 0.99;
+const ANGULAR_VELOCITY = 0.006;
 
 export default class KeyboardControlable extends Trait {
   update(details) {
@@ -26,9 +27,11 @@ export default class KeyboardControlable extends Trait {
       velocity.setLength(MAX_SPEED);
     }
     if(details.keys[LEFT]) {
-      object.rotation.z -= 0.1;
+      this.entity.traits.LawsOfMotion.angularVelocity = -ANGULAR_VELOCITY;
     } else if (details.keys[RIGHT]) {
-      object.rotation.z += 0.1;
+      this.entity.traits.LawsOfMotion.angularVelocity = ANGULAR_VELOCITY;
+    } else {
+      this.entity.traits.LawsOfMotion.angularVelocity = 0;
     }
   }
 }
