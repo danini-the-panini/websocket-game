@@ -1,7 +1,7 @@
 import THREE from "three";
 
 import Game from "./game";
-import Position from "./traits/position";
+import Renderable from "./traits/renderable";
 import Player from "./traits/player";
 import ReceivesPositionFromClient from "./traits/receivesPositionFromClient";
 import Entity from "./entity";
@@ -32,7 +32,7 @@ export default class ServerGame extends Game {
 
   createPlayer(message) {
     const player = new Entity();
-    const positionTrait = new Position();
+    const positionTrait = new Renderable(new THREE.Object3D());
     player.addTrait(positionTrait);
 
     const name = this.getUniqueName(message.d.n);

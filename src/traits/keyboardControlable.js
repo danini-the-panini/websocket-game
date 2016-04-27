@@ -13,8 +13,8 @@ const DAMPENING = 0.99;
 
 export default class KeyboardControlable extends Trait {
   update(details) {
-    const velocity = this.entity.traits.Position.velocity;
-    const object = this.entity.traits.Position.object;
+    const velocity = this.entity.traits.LawsOfMotion.velocity;
+    const object = this.entity.traits.Renderable.object;
     if(details.keys[UP]) {
       velocity.add(new THREE.Vector3(0, 1, 0).applyQuaternion(object.quaternion).normalize().multiplyScalar(ACCELERATION));
     } else if (details.keys[DOWN]) {
@@ -30,12 +30,5 @@ export default class KeyboardControlable extends Trait {
     } else if (details.keys[RIGHT]) {
       object.rotation.z += 0.1;
     }
-  }
-
-  attachTo(entity) {
-    if (!entity.traits.Position) {
-      throw new Error("Entity has no Position trait");
-    }
-    super.attachTo(entity);
   }
 }

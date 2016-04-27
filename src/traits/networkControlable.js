@@ -13,10 +13,10 @@ export default class NetworkControllable extends Trait {
 
   onMessage(message) {
     if (message.t === "p" && message.s === this.entity.traits.Player.id) {
-      const positionTrait = this.entity.traits.Position;
-      positionTrait.object.position.x = message.d.x;
-      positionTrait.object.position.y = message.d.y;
-      positionTrait.object.rotation.z = message.d.r;
+      const renderable = this.entity.traits.Renderable;
+      renderable.object.position.x = message.d.x;
+      renderable.object.position.y = message.d.y;
+      renderable.object.rotation.z = message.d.r;
     }
   }
 

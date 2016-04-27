@@ -8,13 +8,13 @@ export default class SendsPositionToServer extends Trait {
 
   update() {
     super.update();
-    const positionTrait = this.entity.traits.Position;
+    const renderableTrait = this.entity.traits.Renderable;
     this.socket.send({
       t: "p",
       d: {
-        x: positionTrait.object.position.x,
-        y: positionTrait.object.position.y,
-        r: positionTrait.object.rotation.z
+        x: renderableTrait.object.position.x,
+        y: renderableTrait.object.position.y,
+        r: renderableTrait.object.rotation.z
       }
     });
   }

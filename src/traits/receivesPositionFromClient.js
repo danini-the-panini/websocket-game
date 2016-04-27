@@ -16,10 +16,10 @@ export default class ReceivesPositionFromClient extends Trait {
 
   onMessage(message) {
     if (message.t === "p") {
-      const positionTrait = this.entity.traits.Position;
-      positionTrait.object.position.x = message.d.x;
-      positionTrait.object.position.y = message.d.y;
-      positionTrait.object.rotation.z = message.d.r;
+      const renderableTrait = this.entity.traits.Renderable;
+      renderableTrait.object.position.x = message.d.x;
+      renderableTrait.object.position.y = message.d.y;
+      renderableTrait.object.rotation.z = message.d.r;
     }
 
     message.s = this.entity.traits.Player.id;

@@ -7,6 +7,9 @@ export default class GraphicsEngine {
     this.canvas = document.getElementById("webgl_canvas");
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
 
+    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.type = THREE.BasicShadowMap;
+
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 75, 1, 0.1, 1000 );
 
@@ -26,20 +29,6 @@ export default class GraphicsEngine {
 
     const amLight = new THREE.AmbientLight( 0x404040 );
     this.scene.add(amLight);
-
-    this.light = new THREE.DirectionalLight( 0xffffff );
-    this.light.castShadow = true;
-    this.light.shadow.mapSize.set(1024, 1024);
-    this.light.shadow.camera.near = 5;
-    this.light.shadow.camera.far = 50;
-    this.light.shadow.camera.right = 10;
-    this.light.shadow.camera.left = -10;
-    this.light.shadow.camera.top = 10;
-    this.light.shadow.camera.bottom = -10;
-    this.light.position.set(10, 5, 30);
-    this.scene.add(this.light);
-
-    this.camera.position.z = 10;
 
     this.overlay = document.getElementById("overlay");
     this.scoreboard = document.getElementById("scoreboard");
