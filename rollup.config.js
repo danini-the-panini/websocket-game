@@ -3,11 +3,10 @@ import commonjs from "rollup-plugin-commonjs";
 import babel from "rollup-plugin-babel";
 
 export default {
-  entry: "./src/client.js",
   plugins: [
     nodeResolve(),
     commonjs({
-      exclude: "./src/client.js"
+      exclude: "src/**"
     }),
     babel({
       exclude: "node_modules/**",
@@ -15,5 +14,6 @@ export default {
       babelrc: false
     })
   ],
-  format: "cjs"
+  sourceMap: true,
+  intro: "if (typeof module !== 'undefined' && module.exports) require('source-map-support').install();"
 };

@@ -6,9 +6,16 @@ export default class Renderable extends Trait {
     this.object = object;
   }
 
+  attachTo(entity) {
+    super.attachTo(entity);
+    if (entity.game.graphicsEngine) {
+      entity.game.graphicsEngine.scene.add(this.object);
+    }
+  }
+
   detachFrom(entity) {
     super.detachFrom(entity);
-    this.object.parent.remove(this.object);
+    this.cleanUp();
   }
 
   cleanUp() {

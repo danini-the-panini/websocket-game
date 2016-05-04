@@ -31,7 +31,8 @@ export default class ServerGame extends Game {
   }
 
   createPlayer(message) {
-    const player = new Entity();
+    const player = this.createEntity();
+    
     const positionTrait = new Renderable(new THREE.Object3D());
     player.addTrait(positionTrait);
 
@@ -40,8 +41,6 @@ export default class ServerGame extends Game {
       null, name, new THREE.Color().copy(message.d.c)
     );
     player.addTrait(playerTrait);
-
-    this.addEntity(player);
 
     return player;
   }

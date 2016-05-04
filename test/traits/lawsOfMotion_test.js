@@ -1,14 +1,16 @@
 import THREE from "three";
 import { assert } from "chai";
 
+import Game from "../../src/game";
 import LawsOfMotion from "../../src/traits/lawsOfMotion";
 import Renderable from "../../src/traits/renderable";
-import Entity from "../../src/entity";
 
 describe("LawsOfMotion", () => {
   describe("#update", () => {
     it("updates the position and rotation based on velocity and delta", () => {
-      const entity = new Entity();
+      const game = new Game();
+
+      const entity = game.createEntity();
       const renderable = new Renderable(new THREE.Object3D());
       entity.addTrait(renderable);
       const lawsOfMotion = new LawsOfMotion();

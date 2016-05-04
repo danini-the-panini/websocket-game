@@ -14,7 +14,7 @@ import Player from "./traits/player";
 import SendsPositionToServer from "./traits/sendsPositionToServer";
 import NetworkControlable from "./traits/networkControlable";
 import Follower from "./traits/follower";
-import Entity from "./entity";
+import Weaponized from "./traits/weaponized";
 
 export default class ClientGame extends Game {
   constructor() {
@@ -85,15 +85,13 @@ export default class ClientGame extends Game {
     player.addTrait(new KeyboardControlable());
     player.addTrait(new SendsPositionToServer(this.socket));
 
-    const cameraEntity = new Entity();
+    const cameraEntity = this.createEntity();
     cameraEntity.addTrait(new Renderable(this.graphicsEngine.camera));
     cameraEntity.addTrait(new Follower(player, new THREE.Vector3(0, 0, 10)));
-    this.addEntity(cameraEntity);
 
-    const lightEntity = new Entity();
+    const lightEntity = this.createEntity();
     lightEntity.addTrait(new Renderable(this.createLight()));
     lightEntity.addTrait(new Follower(player, new THREE.Vector3(10, 5, 30)));
-    this.addEntity(lightEntity);
 
     message.ps.forEach(p => this.createOpponentPlayer(p));
   }
@@ -109,23 +107,18 @@ export default class ClientGame extends Game {
   }
 
   createPlayer(message) {
-    const player = new Entity();
+    const player = this.createEntity();
+
+    player.addTrait(new Player(
+      message.id, message.n, new THREE.Color().copy(message.c)
+    ));
 
     const object = this.createPlayerMesh();
-    this.graphicsEngine.scene.add(object);
+    object.material.color.copy(player.traits.Player.color);
     player.addTrait(new Renderable(object));
 
-    const lawsOfMotion = new LawsOfMotion();
-    player.addTrait(lawsOfMotion);
-
-    const playerTrait = new Player(
-      message.id, message.n, new THREE.Color().copy(message.c)
-    );
-    player.addTrait(playerTrait);
-
-    object.material.color.copy(playerTrait.color);
-
-    this.addEntity(player);
+    player.addTrait(new LawsOfMotion());
+    player.addTrait(new Weaponized());
 
     return player;
   }
@@ -155,7 +148,6 @@ export default class ClientGame extends Game {
     light.shadow.camera.left = -10;
     light.shadow.camera.top = 10;
     light.shadow.camera.bottom = -10;
-    this.graphicsEngine.scene.add(light);
     return light;
   }
 }

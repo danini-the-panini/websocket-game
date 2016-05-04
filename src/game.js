@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+import Entity from "./entity";
+
 export default class Game {
   constructor() {
     this.updateDetails = {};
@@ -20,6 +22,12 @@ export default class Game {
   addEntity(entity) {
     entity.game = this;
     this.entities.push(entity);
+  }
+
+  createEntity() {
+    const entity = new Entity();
+    this.addEntity(entity);
+    return entity;
   }
 
   removeEntity(entity) {
