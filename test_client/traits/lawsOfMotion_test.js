@@ -1,5 +1,4 @@
 import THREE from "three";
-import { assert } from "chai";
 
 import Game from "../../src/game";
 import LawsOfMotion from "../../src/traits/lawsOfMotion";

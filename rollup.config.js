@@ -4,7 +4,9 @@ import babel from "rollup-plugin-babel";
 
 export default {
   plugins: [
-    nodeResolve(),
+    nodeResolve({
+      preferBuiltins: false
+    }),
     commonjs({
       exclude: "src/**"
     }),

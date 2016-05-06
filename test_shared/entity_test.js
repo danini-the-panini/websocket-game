@@ -1,8 +1,5 @@
-"use strict";
-
 import Entity from "../src/entity";
 import Trait from "../src/trait";
-import { assert } from "chai";
 
 class Testable extends Trait {
   constructor() {
