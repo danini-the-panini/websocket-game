@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test-client": "./node_modules/.bin/karma start karma.conf.js",
-    "test-server": "mocha --recursive --compilers js:babel-register --require test/support test/server test/shared",
+    "test-server": "mocha --recursive --compilers js:babel-register --require test/support/mocha_require test/server test/shared",
     "test": "npm run test-server && npm run test-client",
     "build-server": "./node_modules/.bin/rollup -c rollup.config.js -i src/server.js -o dist/server.js",
     "build-client": "./node_modules/.bin/rollup -c rollup.config.js -i src/client.js -o public/scripts/client.js",
