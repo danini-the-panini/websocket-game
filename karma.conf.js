@@ -30,7 +30,7 @@ module.exports = function(config) {
         ]
       },
       bundle: {
-        // sourceMap: "inline" // TODO: fix this somehow...?
+        sourceMap: "inline"
       }
     },
     reporters: ["mocha"],
