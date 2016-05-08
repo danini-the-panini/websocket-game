@@ -9,8 +9,7 @@ module.exports = function(config) {
       "test/shared/**/*_test.js"
     ],
     preprocessors: {
-      "test/client/**/*_test.js": ["rollup"],
-      "test/shared/**/*_test.js": ["rollup"]
+      "test/**/*.js": ["rollup"]
     },
     exclude: [],
     rollupPreprocessor: {

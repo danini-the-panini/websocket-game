@@ -29,7 +29,7 @@ describe("Entity", () => {
 
       entity.addTrait(trait);
 
-      assert.equal(entity.traits.Testable, trait);
+      expect(entity.traits.Testable).to.equal(trait);
     });
 
     it("sets the added trait's entity to the entity", () => {
@@ -38,7 +38,7 @@ describe("Entity", () => {
 
       entity.addTrait(trait);
 
-      assert.equal(trait.entity, entity);
+      expect(trait.entity).to.equal(entity);
     });
 
     it("removes the trait from an entity if it was attached to one", () => {
@@ -49,8 +49,8 @@ describe("Entity", () => {
 
       newEntity.addTrait(trait);
 
-      assert.isUndefined(oldEntity.traits.Testable);
-      assert.notEqual(trait.entity, oldEntity);
+      expect(oldEntity.traits.Testable).to.be.undefined;
+      expect(trait.entity).to.not.equal(oldEntity);
     });
 
     it("calls attachTo on the trait", () => {
@@ -59,8 +59,8 @@ describe("Entity", () => {
 
       entity.addTrait(trait);
 
-      assert.lengthOf(trait.attachToCalls, 1);
-      assert.equal(trait.attachToCalls[0][0], entity);
+      expect(trait.attachToCalls).to.have.length(1);
+      expect(trait.attachToCalls[0][0]).to.equal(entity);
     });
   });
 
@@ -72,7 +72,7 @@ describe("Entity", () => {
 
       entity.removeTrait(trait);
 
-      assert.isUndefined(entity.traits.Testable);
+      expect(entity.traits.Testable).to.be.undefined;
     });
 
     it("unsets the entity on the trait", () => {
@@ -82,7 +82,7 @@ describe("Entity", () => {
 
       entity.removeTrait(trait);
 
-      assert.isUndefined(trait.entiyt);
+      expect(trait.entity).to.be.undefined;
     });
 
     it("ignores traits that are not attached to the entity", () => {
@@ -93,8 +93,8 @@ describe("Entity", () => {
 
       entity.removeTrait(otherTrait);
 
-      assert.equal(entity.traits.Testable, trait);
-      assert.equal(trait.entity, entity);
+      expect(entity.traits.Testable).to.equal(trait);
+      expect(trait.entity).to.equal(entity);
     });
 
     it("calls detachFrom on the trait", () => {
@@ -104,8 +104,8 @@ describe("Entity", () => {
 
       entity.removeTrait(trait);
 
-      assert.lengthOf(trait.detachFromCalls, 1);
-      assert.equal(trait.detachFromCalls[0][0], entity);
+      expect(trait.detachFromCalls).to.have.length(1);
+      expect(trait.detachFromCalls[0][0]).to.equal(entity);
     });
   });
 
@@ -119,14 +119,14 @@ describe("Entity", () => {
       entity.addTrait(trait);
 
       entity.update(1234);
-      assert.deepEqual(trait.updateCalls, [[1234]]);
+      expect(trait.updateCalls).to.deep.equal([[1234]]);
       entity.update(2345);
-      assert.deepEqual(trait.updateCalls, [[1234], [2345]]);
+      expect(trait.updateCalls).to.deep.equal([[1234], [2345]]);
 
       entity.removeTrait(trait);
 
       entity.update(3456);
-      assert.deepEqual(trait.updateCalls, [[1234], [2345]]);
+      expect(trait.updateCalls).to.deep.equal([[1234], [2345]]);
     });
   });
 });

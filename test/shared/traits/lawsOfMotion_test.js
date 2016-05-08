@@ -1,5 +1,7 @@
 import THREE from "three";
 
+import "../../support/chai_three";
+
 import Game from "../../../src/game";
 import LawsOfMotion from "../../../src/traits/lawsOfMotion";
 import Renderable from "../../../src/traits/renderable";
@@ -22,15 +24,15 @@ describe("LawsOfMotion", () => {
 
       entity.update({ delta: 1 });
 
-      assert.deepEqual(renderable.object.position.toArray(), [2, 3, 0]);
-      assert.deepEqual(renderable.object.rotation.toArray(), [0, 0, 3, "XYZ"]);
+      expect(renderable.object.position).to.be.vector3(2, 3, 0);
+      expect(renderable.object.rotation.toArray()).to.deep.equal([0, 0, 3, "XYZ"]);
 
       lawsOfMotion.velocity.set(-2, 1, 0);
       lawsOfMotion.angularVelocity = -2;
       entity.update({ delta: 2 });
 
-      assert.deepEqual(renderable.object.position.toArray(), [-2, 5, 0]);
-      assert.deepEqual(renderable.object.rotation.toArray(), [0, 0, -1, "XYZ"]);
+      expect(renderable.object.position).to.be.vector3(-2, 5, 0);
+      expect(renderable.object.rotation.toArray()).to.deep.equal([0, 0, -1, "XYZ"]);
     });
   });
 });
