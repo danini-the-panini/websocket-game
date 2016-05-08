@@ -35,6 +35,7 @@
     "karma-mocha-reporter": "^2.0.3",
     "karma-rollup-preprocessor": "github:ulrik59/karma-rollup-preprocessor",
     "karma-sinon": "^1.0.5",
+    "karma-source-map-support": "^1.1.0",
     "mocha": "^2.4.5",
     "rollup": "^0.26.1",
     "rollup-plugin-babel": "^2.4.0",

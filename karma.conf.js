@@ -3,7 +3,7 @@
 module.exports = function(config) {
   config.set({
     basePath: "",
-    frameworks: ["mocha", "chai"],
+    frameworks: ["mocha", "chai", "source-map-support"],
     files: [
       "test/client/**/*_test.js",
       "test/shared/**/*_test.js"
@@ -25,6 +25,7 @@ module.exports = function(config) {
           require("rollup-plugin-babel")({
             exclude: "node_modules/**",
             presets: ["es2015-rollup"],
+            sourceMaps: "inline",
             babelrc: false
           })
         ]
