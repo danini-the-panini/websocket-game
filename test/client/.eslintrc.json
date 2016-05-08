@@ -6,7 +6,7 @@
   },
   "globals": {
     "chai": false,
-    "assert": false,
+    "expect": false,
     "sinon": false
   }
 }
