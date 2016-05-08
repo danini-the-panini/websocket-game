@@ -1,5 +1,5 @@
-import Entity from "../src/entity";
-import Trait from "../src/trait";
+import Entity from "../../src/entity";
+import Trait from "../../src/trait";
 
 class Testable extends Trait {
   constructor() {

@@ -5,12 +5,12 @@ module.exports = function(config) {
     basePath: "",
     frameworks: ["mocha", "chai"],
     files: [
-      "test_client/**/*_test.js",
-      "test_shared/**/*_test.js"
+      "test/client/**/*_test.js",
+      "test/shared/**/*_test.js"
     ],
     preprocessors: {
-      "test_client/**/*_test.js": ["rollup"],
-      "test_shared/**/*_test.js": ["rollup"]
+      "test/client/**/*_test.js": ["rollup"],
+      "test/shared/**/*_test.js": ["rollup"]
     },
     exclude: [],
     rollupPreprocessor: {
@@ -20,7 +20,7 @@ module.exports = function(config) {
             preferBuiltins: false
           }),
           require("rollup-plugin-commonjs")({
-            exclude: ["src/**", "test_shared/**", "test_client/**"]
+            exclude: ["src/**", "test/**"]
           }),
           require("rollup-plugin-babel")({
             exclude: "node_modules/**",

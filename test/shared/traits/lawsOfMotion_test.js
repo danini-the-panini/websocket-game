@@ -1,8 +1,8 @@
 import THREE from "three";
 
-import Game from "../../src/game";
-import LawsOfMotion from "../../src/traits/lawsOfMotion";
-import Renderable from "../../src/traits/renderable";
+import Game from "../../../src/game";
+import LawsOfMotion from "../../../src/traits/lawsOfMotion";
+import Renderable from "../../../src/traits/renderable";
 
 describe("LawsOfMotion", () => {
   describe("#update", () => {

@@ -1,8 +1,8 @@
 import THREE from "three";
 
-import Game from "../../src/game";
-import Renderable from "../../src/traits/renderable";
-import Follower from "../../src/traits/follower";
+import Game from "../../../src/game";
+import Renderable from "../../../src/traits/renderable";
+import Follower from "../../../src/traits/follower";
 
 describe("Follower", () => {
   describe("#update", () => {
