@@ -15,6 +15,9 @@ module.exports = function(config) {
     rollupPreprocessor: {
       rollup: {
         plugins: [
+          require("rollup-plugin-istanbul")({
+            exclude: ["node_modules/**", "test/**/*.js"]
+          }),
           require("rollup-plugin-node-resolve")({
             preferBuiltins: false
           }),
@@ -33,7 +36,14 @@ module.exports = function(config) {
         sourceMap: "inline"
       }
     },
-    reporters: ["mocha"],
+    reporters: ["mocha", "coverage"],
+    coverageReporter: {
+      includeAllSources: true,
+      dir: "coverage",
+      subdir: "client",
+      type: "lcovonly",
+      file: "lcov.info"
+    },
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
