@@ -41,8 +41,8 @@ module.exports = function(config) {
       includeAllSources: true,
       dir: "coverage",
       subdir: "client",
-      type: "lcovonly",
-      file: "lcov.info"
+      type: "json",
+      file: "coverage-final.info"
     },
     port: 9876,
     colors: true,
