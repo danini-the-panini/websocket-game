@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test-client": "node_modules/.bin/karma start karma.conf.js",
-    "test-server": "node_modules/.bin/nyc --reporter=json --report-dir=coverage/server --require babel-core/register node_modules/.bin/mocha --recursive --require ./test/support/mocha_require test/server test/shared",
+    "test-server": "node_modules/.bin/nyc node_modules/.bin/mocha test/server test/shared",
     "test": "npm run test-server && npm run test-client && node_modules/.bin/istanbul report",
     "clean": "rm -rf coverage dist .nyc_output",
     "build-server": "node_modules/.bin/rollup -c rollup.config.js -i src/server.js -o dist/server.js",
@@ -14,9 +14,10 @@
     "start": "npm run build && node dist/server.js"
   },
   "nyc": {
-    "include": [
-      "/"
-    ]
+    "include": ["/"],
+    "reporter": "json",
+    "report-dir": "coverage/server",
+    "require": "babel-core/register"
   },
   "author": "",
   "license": "ISC",

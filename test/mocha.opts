@@ -1,0 +1,2 @@
+--require test/support/mocha_require
+--recursive
