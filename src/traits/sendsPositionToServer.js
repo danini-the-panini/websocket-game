@@ -1,6 +1,6 @@
-import Trait from "../trait";
+const Trait = require("../trait")
 
-export default class SendsPositionToServer extends Trait {
+module.exports = class SendsPositionToServer extends Trait {
   constructor(socket) {
     super();
     this.socket = socket;

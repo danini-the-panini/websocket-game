@@ -1,7 +1,7 @@
 /* eslint-env node */
 /* eslint-disable no-console */
 
-import ServerGame from "./serverGame";
+const ServerGame = require("./serverGame");
 
 const express = require("express");
 const expressWs = require("express-ws");

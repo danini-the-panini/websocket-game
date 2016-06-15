@@ -1,8 +1,8 @@
 /* eslint-env browser */
 
-import _ from "lodash";
+const _ = require("lodash")
 
-export default class ClientSocket {
+module.exports = class ClientSocket {
   constructor(websocket) {
     this.websocket = websocket;
     this.listeners = [];

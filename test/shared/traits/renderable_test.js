@@ -1,7 +1,7 @@
-// import THREE from "three";
+// const THREE = require("three")
 //
-// import Renderable from "../../../src/traits/renderable";
-// import Entity from "../../../src/entity";
+// const Renderable = require("../../../src/traits/renderable")
+// const Entity = require("../../../src/entity")
 
 describe("Renderable", () => {
   // TODO

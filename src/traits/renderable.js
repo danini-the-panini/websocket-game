@@ -1,6 +1,6 @@
-import Trait from "../trait";
+const Trait = require("../trait")
 
-export default class Renderable extends Trait {
+module.exports = class Renderable extends Trait {
   constructor(object) {
     super();
     this.object = object;

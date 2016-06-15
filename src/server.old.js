@@ -1,7 +1,7 @@
 /* eslint-env node */
 /* eslint-disable no-console */
 
-import Player from "./player";
+const Player = require("./player")
 
 const express = require("express");
 const expressWs = require("express-ws");

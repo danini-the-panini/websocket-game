@@ -1,6 +1,6 @@
-import Trait from "../trait";
+const Trait = require("../trait")
 
-export default class ReceivesPositionFromClient extends Trait {
+module.exports = class ReceivesPositionFromClient extends Trait {
   constructor(websocket) {
     super();
     this.websocket = websocket;

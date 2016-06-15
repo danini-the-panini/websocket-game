@@ -1,14 +1,14 @@
-import THREE from "three";
+const THREE = require("three")
 
-import Trait from "../trait";
-import Renderable from "./renderable";
-import LawsOfMotion from "./lawsOfMotion";
+const Trait = require("../trait")
+const Renderable = require("./renderable")
+const LawsOfMotion = require("./lawsOfMotion")
 
 const FIRE_TIME = 150;
 const BULLET_LIFE = 10000;
 const BULLET_SPEED = 0.03;
 
-export default class Weaponized extends Trait {
+class Weaponized extends Trait {
   constructor() {
     super();
     this.lastFiredAt = 0;
@@ -52,3 +52,5 @@ export default class Weaponized extends Trait {
 
 Weaponized.bulletGeometry = new THREE.BoxGeometry(0.1, 0.2, 0.1);
 Weaponized.bulletMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+
+module.exports = Weaponized;

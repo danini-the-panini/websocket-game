@@ -1,22 +1,22 @@
 /* eslint-env browser */
 
-import $ from "jquery";
-import THREE from "three";
-import _ from "lodash";
+const $ = require("jquery")
+const THREE = require("three")
+const _ = require("lodash")
 
-import Game from "./game";
-import GraphicsEngine from "./graphicsEngine";
-import ClientSocket from "./clientSocket";
-import LawsOfMotion from "./traits/lawsOfMotion";
-import Renderable from "./traits/renderable";
-import KeyboardControlable from "./traits/keyboardControlable";
-import Player from "./traits/player";
-import SendsPositionToServer from "./traits/sendsPositionToServer";
-import NetworkControlable from "./traits/networkControlable";
-import Follower from "./traits/follower";
-import Weaponized from "./traits/weaponized";
+const Game = require("./game")
+const GraphicsEngine = require("./graphicsEngine")
+const ClientSocket = require("./clientSocket")
+const LawsOfMotion = require("./traits/lawsOfMotion")
+const Renderable = require("./traits/renderable")
+const KeyboardControlable = require("./traits/keyboardControlable")
+const Player = require("./traits/player")
+const SendsPositionToServer = require("./traits/sendsPositionToServer")
+const NetworkControlable = require("./traits/networkControlable")
+const Follower = require("./traits/follower")
+const Weaponized = require("./traits/weaponized")
 
-export default class ClientGame extends Game {
+module.exports = class ClientGame extends Game {
   constructor() {
     super();
     this.graphicsEngine = new GraphicsEngine();

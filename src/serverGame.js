@@ -1,12 +1,12 @@
-import THREE from "three";
+const THREE = require("three")
 
-import Game from "./game";
-import Renderable from "./traits/renderable";
-import Player from "./traits/player";
-import ReceivesPositionFromClient from "./traits/receivesPositionFromClient";
-import Entity from "./entity";
+const Game = require("./game")
+const Renderable = require("./traits/renderable")
+const Player = require("./traits/player")
+const ReceivesPositionFromClient = require("./traits/receivesPositionFromClient")
+const Entity = require("./entity")
 
-export default class ServerGame extends Game {
+module.exports = class ServerGame extends Game {
   constructor() {
     super();
     this.nameCounts = {};

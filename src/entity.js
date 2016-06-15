@@ -1,6 +1,6 @@
-import _ from "lodash";
+const _ = require("lodash")
 
-export default class Entity {
+class Entity {
   constructor() {
     this.id = Entity.LAST_ID++;
     this.traits = {};
@@ -32,3 +32,5 @@ export default class Entity {
 }
 
 Entity.LAST_ID = 1;
+
+module.exports = Entity;

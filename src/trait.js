@@ -1,4 +1,4 @@
-export default class Trait {
+module.exports = class Trait {
   constructor() {
 
   }

@@ -1,10 +1,10 @@
-import THREE from "three";
+const THREE = require("three")
 
 import "../../support/chai_three";
 
-import Game from "../../../src/game";
-import LawsOfMotion from "../../../src/traits/lawsOfMotion";
-import Renderable from "../../../src/traits/renderable";
+const Game = require("../../../src/game")
+const LawsOfMotion = require("../../../src/traits/lawsOfMotion")
+const Renderable = require("../../../src/traits/renderable")
 
 describe("LawsOfMotion", () => {
   describe("#update", () => {

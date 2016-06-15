@@ -1,8 +1,8 @@
-import THREE from "three";
+const THREE = require("three")
 
-import Trait from "../trait";
+const Trait = require("../trait")
 
-export default class Player extends Trait {
+class Player extends Trait {
   constructor(id, name, color) {
     super();
     this.id = id || (Player.LAST_ID++);
@@ -12,3 +12,5 @@ export default class Player extends Trait {
 }
 
 Player.LAST_ID = 1;
+
+module.exports = Player;

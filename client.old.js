@@ -1,9 +1,9 @@
 /* eslint-env browser */
 
-import $ from "jquery";
-import THREE from "three";
+const $ = require("jquery");
+const THREE = require("three")
 
-import ClientPlayer from "./lib/clientPlayer";
+const ClientPlayer = require("./lib/clientPlayer")
 
 $(function() {
   var name = prompt("Please enter your name") || "New Folder";

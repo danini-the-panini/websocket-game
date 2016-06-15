@@ -1,6 +1,6 @@
-import THREE from "three";
+const THREE = require("three")
 
-import Trait from "../trait";
+const Trait = require("../trait")
 
 const RIGHT = 37;
 const UP = 38;
@@ -13,7 +13,7 @@ const ACCELERATION = 0.0003;
 const DAMPENING = 0.99;
 const ANGULAR_VELOCITY = 0.006;
 
-export default class KeyboardControlable extends Trait {
+module.exports = class KeyboardControlable extends Trait {
   update(details) {
     const velocity = this.entity.traits.LawsOfMotion.velocity;
     const object = this.entity.traits.Renderable.object;

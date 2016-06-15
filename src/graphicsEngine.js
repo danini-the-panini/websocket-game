@@ -1,8 +1,8 @@
 /* eslint-env browser */
 
-import THREE from "three";
+const THREE = require("three")
 
-export default class GraphicsEngine {
+module.exports = class GraphicsEngine {
   constructor() {
     this.canvas = document.getElementById("webgl_canvas");
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });

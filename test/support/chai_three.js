@@ -1,4 +1,4 @@
-import THREE from "three";
+const THREE = require("three")
 
 chai.use(function() {
   const Assertion = chai.Assertion;

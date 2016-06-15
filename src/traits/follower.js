@@ -1,6 +1,6 @@
-import Trait from "../trait";
+const Trait = require("../trait")
 
-export default class Follower extends Trait {
+module.exports = class Follower extends Trait {
   constructor(followee, offset) {
     super();
     this.followee = followee;

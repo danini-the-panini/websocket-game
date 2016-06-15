@@ -1,6 +1,6 @@
-import Trait from "../trait";
+const Trait = require("../trait")
 
-export default class NetworkControllable extends Trait {
+module.exports = class NetworkControllable extends Trait {
   constructor(socket) {
     super();
     this.socket = socket;

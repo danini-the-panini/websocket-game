@@ -1,8 +1,8 @@
-import THREE from "three";
+const THREE = require("three")
 
-import Trait from "../trait";
+const Trait = require("../trait")
 
-export default class LawsOfMotion extends Trait {
+module.exports = class LawsOfMotion extends Trait {
   constructor(game) {
     super(game);
     this.velocity = new THREE.Vector3();

@@ -1,8 +1,8 @@
 /* eslint-env browser */
 
-import $ from "jquery";
+const $ = require("jquery")
 
-import ClientGame from "./clientGame";
+const ClientGame = require("./clientGame")
 
 $(() => {
   const game = new ClientGame();

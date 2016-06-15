@@ -1,8 +1,8 @@
-import _ from "lodash";
+const _ = require("lodash")
 
-import Entity from "./entity";
+const Entity = require("./entity")
 
-export default class Game {
+module.exports = class Game {
   constructor() {
     this.updateDetails = {};
     this.entities = [];

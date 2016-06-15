@@ -1,8 +1,8 @@
-import THREE from "three";
+const THREE = require("three")
 
-import Game from "../../../src/game";
-import Renderable from "../../../src/traits/renderable";
-import Follower from "../../../src/traits/follower";
+const Game = require("../../../src/game")
+const Renderable = require("../../../src/traits/renderable")
+const Follower = require("../../../src/traits/follower")
 
 describe("Follower", () => {
   describe("#update", () => {
