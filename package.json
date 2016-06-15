@@ -4,10 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test-client": "node_modules/.bin/karma start karma.conf.js",
-    "test-server": "node_modules/.bin/nyc node_modules/.bin/mocha test/server test/shared",
-    "test": "npm run test-server && npm run test-client && node_modules/.bin/istanbul report",
-    "clean": "rm -rf coverage dist .nyc_output",
+    "test": "node_modules/.bin/mocha test",
+    "clean": "rm -rf public/scripts",
     "build": "node_modules/.bin/webpack --config webpack.client.config.js",
     "start": "npm run build && node src/server.js"
   },
@@ -37,15 +35,8 @@
     "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
     "eslint": "^2.8.0",
+    "jsdom": "^9.2.1",
     "json-loader": "^0.5.4",
-    "karma": "^0.13.22",
-    "karma-chai": "^0.1.0",
-    "karma-chrome-launcher": "^0.2.3",
-    "karma-mocha": "^0.2.2",
-    "karma-mocha-reporter": "^2.0.3",
-    "karma-rollup-preprocessor": "github:ulrik59/karma-rollup-preprocessor",
-    "karma-sinon": "^1.0.5",
-    "karma-source-map-support": "^1.1.0",
     "mocha": "^2.4.5",
     "sinon": "^1.17.4"
   }

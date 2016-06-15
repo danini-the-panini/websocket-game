@@ -1,12 +1,12 @@
 const THREE = require("three")
 
-import "../../support/chai_three";
+require("../support/chai_three");
 
-const Game = require("../../../src/game")
-const Entity = require("../../../src/entity")
-const KeyboardControlable = require("../../../src/traits/keyboardControlable")
-const Renderable = require("../../../src/traits/renderable")
-const LawsOfMotion = require("../../../src/traits/lawsOfMotion")
+const Game = require("../../src/game")
+const Entity = require("../../src/entity")
+const KeyboardControlable = require("../../src/traits/keyboardControlable")
+const Renderable = require("../../src/traits/renderable")
+const LawsOfMotion = require("../../src/traits/lawsOfMotion")
 
 const RIGHT = 37;
 const UP = 38;

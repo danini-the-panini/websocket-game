@@ -1,6 +1,6 @@
 /* eslint-env node */
 
-const chai = require("chai")
+const chai = require("chai");
 
 global.chai = chai;
 global.expect = chai.expect;

@@ -1,6 +1,3 @@
 node_modules
 *.log
-/dist/
 /public/scripts/
-/coverage/
-/.nyc_output/
