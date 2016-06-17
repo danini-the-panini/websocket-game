@@ -1,10 +1,9 @@
-const THREE = require("three")
+const THREE = require("three");
 
-const Game = require("./game")
-const Renderable = require("./traits/renderable")
-const Player = require("./traits/player")
-const ReceivesPositionFromClient = require("./traits/receivesPositionFromClient")
-const Entity = require("./entity")
+const Game = require("./game");
+const Renderable = require("./traits/renderable");
+const Player = require("./traits/player");
+const ReceivesPositionFromClient = require("./traits/receivesPositionFromClient");
 
 module.exports = class ServerGame extends Game {
   constructor() {
@@ -32,7 +31,7 @@ module.exports = class ServerGame extends Game {
 
   createPlayer(message) {
     const player = this.createEntity();
-    
+
     const positionTrait = new Renderable(new THREE.Object3D());
     player.addTrait(positionTrait);
 
@@ -106,4 +105,4 @@ module.exports = class ServerGame extends Game {
       }
     });
   }
-}
+};

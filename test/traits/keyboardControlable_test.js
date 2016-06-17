@@ -1,18 +1,13 @@
-const THREE = require("three")
+const THREE = require("three");
 
 require("../support/chai_three");
 
-const Game = require("../../src/game")
-const Entity = require("../../src/entity")
-const KeyboardControlable = require("../../src/traits/keyboardControlable")
-const Renderable = require("../../src/traits/renderable")
-const LawsOfMotion = require("../../src/traits/lawsOfMotion")
+const Game = require("../../src/game");
+const KeyboardControlable = require("../../src/traits/keyboardControlable");
+const Renderable = require("../../src/traits/renderable");
+const LawsOfMotion = require("../../src/traits/lawsOfMotion");
 
-const RIGHT = 37;
 const UP = 38;
-const LEFT = 39;
-const DOWN = 40;
-const SPACE = 32;
 
 describe("KeyboardControlable", () => {
   describe("#update", () => {

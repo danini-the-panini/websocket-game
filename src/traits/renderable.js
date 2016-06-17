@@ -1,4 +1,4 @@
-const Trait = require("../trait")
+const Trait = require("../trait");
 
 module.exports = class Renderable extends Trait {
   constructor(object) {
@@ -23,4 +23,4 @@ module.exports = class Renderable extends Trait {
       this.object.parent.remove(this.object);
     }
   }
-}
+};

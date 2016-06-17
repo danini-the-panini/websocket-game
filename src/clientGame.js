@@ -1,20 +1,20 @@
 /* eslint-env browser */
 
-const $ = require("jquery")
-const THREE = require("three")
-const _ = require("lodash")
+const $ = require("jquery");
+const THREE = require("three");
+const _ = require("lodash");
 
-const Game = require("./game")
-const GraphicsEngine = require("./graphicsEngine")
-const ClientSocket = require("./clientSocket")
-const LawsOfMotion = require("./traits/lawsOfMotion")
-const Renderable = require("./traits/renderable")
-const KeyboardControlable = require("./traits/keyboardControlable")
-const Player = require("./traits/player")
-const SendsPositionToServer = require("./traits/sendsPositionToServer")
-const NetworkControlable = require("./traits/networkControlable")
-const Follower = require("./traits/follower")
-const Weaponized = require("./traits/weaponized")
+const Game = require("./game");
+const GraphicsEngine = require("./graphicsEngine");
+const ClientSocket = require("./clientSocket");
+const LawsOfMotion = require("./traits/lawsOfMotion");
+const Renderable = require("./traits/renderable");
+const KeyboardControlable = require("./traits/keyboardControlable");
+const Player = require("./traits/player");
+const SendsPositionToServer = require("./traits/sendsPositionToServer");
+const NetworkControlable = require("./traits/networkControlable");
+const Follower = require("./traits/follower");
+const Weaponized = require("./traits/weaponized");
 
 module.exports = class ClientGame extends Game {
   constructor() {
@@ -150,4 +150,4 @@ module.exports = class ClientGame extends Game {
     light.shadow.camera.bottom = -10;
     return light;
   }
-}
+};

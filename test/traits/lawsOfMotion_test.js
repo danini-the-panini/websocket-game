@@ -1,10 +1,10 @@
-const THREE = require("three")
+const THREE = require("three");
 
 require("../support/chai_three");
 
-const Game = require("../../src/game")
-const LawsOfMotion = require("../../src/traits/lawsOfMotion")
-const Renderable = require("../../src/traits/renderable")
+const Game = require("../../src/game");
+const LawsOfMotion = require("../../src/traits/lawsOfMotion");
+const Renderable = require("../../src/traits/renderable");
 
 describe("LawsOfMotion", () => {
   describe("#update", () => {

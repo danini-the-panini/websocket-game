@@ -1,4 +1,4 @@
-const Trait = require("../trait")
+const Trait = require("../trait");
 
 module.exports = class SendsPositionToServer extends Trait {
   constructor(socket) {
@@ -23,4 +23,4 @@ module.exports = class SendsPositionToServer extends Trait {
     super.cleanUp();
     this.socket.unsubscribe(this);
   }
-}
+};

@@ -1,11 +1,11 @@
-const THREE = require("three")
+const THREE = require("three");
 
-const Trait = require("../trait")
-const Renderable = require("./renderable")
-const LawsOfMotion = require("./lawsOfMotion")
+const Trait = require("../trait");
+const Renderable = require("./renderable");
+const LawsOfMotion = require("./lawsOfMotion");
 
 const FIRE_TIME = 150;
-const BULLET_LIFE = 10000;
+// const BULLET_LIFE = 10000; // TODO
 const BULLET_SPEED = 0.03;
 
 class Weaponized extends Trait {

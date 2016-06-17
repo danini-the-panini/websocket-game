@@ -1,4 +1,4 @@
-const Trait = require("../trait")
+const Trait = require("../trait");
 
 module.exports = class Follower extends Trait {
   constructor(followee, offset) {
@@ -21,4 +21,4 @@ module.exports = class Follower extends Trait {
   updatePosition() {
     this.entity.traits.Renderable.object.position.copy(this.followee.traits.Renderable.object.position).add(this.offset);
   }
-}
+};

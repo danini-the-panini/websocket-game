@@ -1,4 +1,4 @@
-const Trait = require("../trait")
+const Trait = require("../trait");
 
 module.exports = class ReceivesPositionFromClient extends Trait {
   constructor(websocket) {
@@ -10,7 +10,7 @@ module.exports = class ReceivesPositionFromClient extends Trait {
     try {
       this.websocket.send(JSON.stringify(message));
     } catch (error) {
-      console.error(error.stack);
+      console.error(error.stack); // eslint-disable-line no-console
     }
   }
 
@@ -31,4 +31,4 @@ module.exports = class ReceivesPositionFromClient extends Trait {
         e.traits.ReceivesPositionFromClient.send(message);
       });
   }
-}
+};

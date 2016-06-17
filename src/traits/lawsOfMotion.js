@@ -1,6 +1,6 @@
-const THREE = require("three")
+const THREE = require("three");
 
-const Trait = require("../trait")
+const Trait = require("../trait");
 
 module.exports = class LawsOfMotion extends Trait {
   constructor(game) {
@@ -17,4 +17,4 @@ module.exports = class LawsOfMotion extends Trait {
 
     this.entity.traits.Renderable.object.rotation.z += this.angularVelocity * details.delta;
   }
-}
+};

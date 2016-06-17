@@ -1,6 +1,6 @@
-const _ = require("lodash")
+const _ = require("lodash");
 
-const Entity = require("./entity")
+const Entity = require("./entity");
 
 module.exports = class Game {
   constructor() {
@@ -47,4 +47,4 @@ module.exports = class Game {
     this.updateDetails.delta = this.updateDetails.now - this.lastUpdate;
     this.lastUpdate = this.updateDetails.now;
   }
-}
+};

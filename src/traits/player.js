@@ -1,6 +1,6 @@
-const THREE = require("three")
+const THREE = require("three");
 
-const Trait = require("../trait")
+const Trait = require("../trait");
 
 class Player extends Trait {
   constructor(id, name, color) {

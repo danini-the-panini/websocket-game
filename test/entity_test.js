@@ -1,5 +1,5 @@
-const Entity = require("../src/entity")
-const Trait = require("../src/trait")
+const Entity = require("../src/entity");
+const Trait = require("../src/trait");
 
 class Testable extends Trait {
   constructor() {

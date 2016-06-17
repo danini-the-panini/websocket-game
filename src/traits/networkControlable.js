@@ -1,4 +1,4 @@
-const Trait = require("../trait")
+const Trait = require("../trait");
 
 module.exports = class NetworkControllable extends Trait {
   constructor(socket) {
@@ -24,4 +24,4 @@ module.exports = class NetworkControllable extends Trait {
     super.cleanUp();
     this.socket.unsubscribe(this);
   }
-}
+};

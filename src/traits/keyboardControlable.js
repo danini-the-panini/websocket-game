@@ -1,6 +1,6 @@
-const THREE = require("three")
+const THREE = require("three");
 
-const Trait = require("../trait")
+const Trait = require("../trait");
 
 const RIGHT = 37;
 const UP = 38;
@@ -42,4 +42,4 @@ module.exports = class KeyboardControlable extends Trait {
       this.entity.traits.Weaponized.fire(details);
     }
   }
-}
+};

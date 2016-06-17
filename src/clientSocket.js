@@ -1,6 +1,6 @@
 /* eslint-env browser */
 
-const _ = require("lodash")
+const _ = require("lodash");
 
 module.exports = class ClientSocket {
   constructor(websocket) {
@@ -26,4 +26,4 @@ module.exports = class ClientSocket {
   unsubscribe(listener) {
     _.remove(this.listeners, l => l === listener);
   }
-}
+};

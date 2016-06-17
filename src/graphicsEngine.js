@@ -1,6 +1,6 @@
 /* eslint-env browser */
 
-const THREE = require("three")
+const THREE = require("three");
 
 module.exports = class GraphicsEngine {
   constructor() {
@@ -53,4 +53,4 @@ module.exports = class GraphicsEngine {
   render() {
     this.renderer.render(this.scene, this.camera);
   }
-}
+};
