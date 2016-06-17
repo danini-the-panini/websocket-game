@@ -1,3 +1,7 @@
 machine:
   node:
     version: 6.2.0
+
+test:
+  override:
+    - istanbul cover node_modules/.bin/_mocha -- --reporter mocha-junit-reporter --reporter-options mochaFile=$CIRCLE_TEST_REPORTS/mocha.xml && cat ./coverage/lcov.info | node_modules/.bin/coveralls
