@@ -17,6 +17,10 @@ module.exports = class NetworkControllable extends Trait {
       renderable.object.position.x = message.d.x;
       renderable.object.position.y = message.d.y;
       renderable.object.rotation.z = message.d.r;
+      const lawsOfMotion = this.entity.traits.LawsOfMotion;
+      lawsOfMotion.velocity.x = message.v.x;
+      lawsOfMotion.velocity.y = message.v.y;
+      lawsOfMotion.angularVelocity = message.v.r;
     }
   }
 

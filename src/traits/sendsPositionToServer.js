@@ -8,13 +8,19 @@ module.exports = class SendsPositionToServer extends Trait {
 
   update() {
     super.update();
-    const renderableTrait = this.entity.traits.Renderable;
+    const renderable = this.entity.traits.Renderable;
+    const lawsOfMotion = this.entity.traits.LawsOfMotion;
     this.socket.send({
       t: "p",
       d: {
-        x: renderableTrait.object.position.x,
-        y: renderableTrait.object.position.y,
-        r: renderableTrait.object.rotation.z
+        x: renderable.object.position.x,
+        y: renderable.object.position.y,
+        r: renderable.object.rotation.z
+      },
+      v: {
+        x: lawsOfMotion.velocity.x,
+        y: lawsOfMotion.velocity.y,
+        r: lawsOfMotion.angularVelocity
       }
     });
   }
