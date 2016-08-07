@@ -1,14 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 
-const HelloMessage = ({ name }) => (
-  <div>Hello {name}</div>
-);
-HelloMessage.propTypes = {
-  name: React.PropTypes.string.isRequired
-};
+import configureStore from './configureStore';
+import clientReducer from './clientReducer';
+
+import Game from './components/Game';
+
+const store = configureStore(clientReducer);
 
 ReactDOM.render(
-  <HelloMessage name="John" />,
+  <Provider store={store}>
+    <Game.Connected />
+  </Provider>,
   document.getElementById('react-root')
 );

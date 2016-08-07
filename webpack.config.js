@@ -26,11 +26,7 @@ const BASE_CONFIG = Object.freeze({
       {
         test: /\.js(x|)$/,
         loader: 'babel-loader',
-        exclude: /node_modules/,
-        query: {
-          presets: ['es2015', 'react', 'stage-0'],
-          plugins: ['transform-runtime']
-        }
+        exclude: /node_modules/
       }
     ]
   }
