@@ -1,0 +1,5 @@
+--require source-map-support/register
+--require babel-polyfill
+--require babel-register
+--require ./test/helpers/index.js
+--recursive
