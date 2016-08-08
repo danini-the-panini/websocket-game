@@ -22,5 +22,13 @@ describe('playerReducer', function() {
 
       expect(newPlayer.get('name')).toBe('John Doe');
     });
+
+    it('does not set the player name if the id is not that of the player', function() {
+      const oldPlayer = Immutable.Map({ id: 123 });
+
+      const newPlayer = playerReducer(oldPlayer, setName(999, 'John Doe'));
+
+      expect(newPlayer.has('name')).toBe(false);
+    });
   });
 });
