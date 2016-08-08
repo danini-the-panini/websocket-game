@@ -1,5 +1,6 @@
 export const ADD_PLAYER = 'ADD_PLAYER';
 export const REMOVE_PLAYER = 'REMOVE_PLAYER';
+export const SET_NAME = 'SET_NAME';
 
 export const CONNECTING_TO_SERVER = 'CONNECTING_TO_SERVER';
 export const CONNECTED_TO_SERVER = 'CONNECTED_TO_SERVER';

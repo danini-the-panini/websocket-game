@@ -1,5 +1,5 @@
 import { CONNECTION_ACK, JOIN_SERVER } from './actionTypes';
-import { addPlayer, removePlayer } from './actions/playerActionCreators';
+import { addPlayer, removePlayer, setName } from './actions/playerActionCreators';
 
 function connectionAck(id) {
   return { type: CONNECTION_ACK, id };
@@ -35,7 +35,7 @@ export function onClientAction(id, action) {
     switch (action.type) {
     case JOIN_SERVER:
       // TODO: normalize name!
-      dispatchPlayerAction(dispatch, id, action);
+      dispatch(setName(id, action.name));
       broadcastAll(players, id, action);
       break;
     default:

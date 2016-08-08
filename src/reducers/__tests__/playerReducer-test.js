@@ -1,7 +1,9 @@
 /* eslint-env jest */
 
+import Immutable from 'immutable';
+
 import playerReducer from '../playerReducer';
-import { addPlayer } from '../../actions/playerActionCreators';
+import { addPlayer, setName } from '../../actions/playerActionCreators';
 
 describe('playerReducer', function() {
   describe('adding a player', function() {
@@ -9,6 +11,16 @@ describe('playerReducer', function() {
       const newPlayer = playerReducer(undefined, addPlayer(123));
 
       expect(newPlayer.get('id')).toBe(123);
+    });
+  });
+
+  describe('setting player name', function() {
+    it('sets the name on the player', function() {
+      const oldPlayer = Immutable.Map({ id: 123 });
+
+      const newPlayer = playerReducer(oldPlayer, setName(123, 'John Doe'));
+
+      expect(newPlayer.get('name')).toBe('John Doe');
     });
   });
 });
