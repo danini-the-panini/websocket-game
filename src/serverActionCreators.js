@@ -32,11 +32,19 @@ function dispatchPlayerAction(dispatch, id, action) {
 export function onClientAction(id, action) {
   return (dispatch, getStore) => {
     const players = getStore().get('players');
+    const player = players.get(id);
     switch (action.type) {
     case JOIN_SERVER:
       // TODO: normalize name!
       dispatch(setName(id, action.name));
       broadcastAll(players, id, action);
+      players
+        .filterNot((_, key) => key === id)
+        .forEach(p => player.get('ws').send(JSON.stringify({
+          type: JOIN_SERVER,
+          id: p.get('id'),
+          name: p.get('name')
+        })));
       break;
     default:
       dispatchPlayerAction(dispatch, id, action);
