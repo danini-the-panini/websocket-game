@@ -1,4 +1,4 @@
-import { CONNECTION_ACK, JOIN_SERVER } from './actionTypes';
+import { CONNECTION_ACK, JOIN_SERVER, LEAVE_SERVER } from './actionTypes';
 import { addPlayer, removePlayer, setName } from './actions/playerActionCreators';
 
 function connectionAck(id) {
@@ -54,7 +54,9 @@ export function onClientAction(id, action) {
 }
 
 export function onClientDisconnected(id) {
-  return dispatch => {
+  return (dispatch, getStore) => {
+    const players = getStore().get('players');
     dispatch(removePlayer(id));
+    broadcastAllButSource(players, id, { type: LEAVE_SERVER });
   };
 }

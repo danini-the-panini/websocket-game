@@ -29,11 +29,11 @@ export default class Game extends React.Component {
           <h1>#{this.props.player.get('id')}: {this.props.player.get('name')}</h1>
           <button onClick={this.onDisconnect}>Disconnect</button>
           <hr />
-          <ol>
+          <ul>
             {this.props.players.isEmpty() ? null : this.props.players.entrySeq().map(([id, player]) => (
               <li key={id}>#{player.get('id')}: {player.get('name')}</li>
             ))}
-          </ol>
+          </ul>
         </div>
       );
     }

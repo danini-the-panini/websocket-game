@@ -1,7 +1,7 @@
 import {
-  CONNECTING_TO_SERVER, CONNECTED_TO_SERVER, DISCONNECTED_FROM_SERVER, JOIN_SERVER
+  CONNECTING_TO_SERVER, CONNECTED_TO_SERVER, DISCONNECTED_FROM_SERVER, JOIN_SERVER, LEAVE_SERVER
 } from './actionTypes';
-import { addPlayer, setName } from './actions/playerActionCreators';
+import { addPlayer, removePlayer, setName } from './actions/playerActionCreators';
 
 function connecting() {
   return { type: CONNECTING_TO_SERVER };
@@ -23,6 +23,9 @@ function onServerAction(action) {
     case JOIN_SERVER:
       dispatch(addPlayer(action.id));
       dispatch(setName(action.id, action.name));
+      break;
+    case LEAVE_SERVER:
+      dispatch(removePlayer(action.id));
       break;
     default:
       dispatch(action);
