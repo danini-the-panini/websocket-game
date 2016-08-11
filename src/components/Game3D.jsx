@@ -51,7 +51,7 @@ export default class Game3D extends React.Component {
 
   mapPlayers(cb) {
     if (this.props.players.isEmpty()) return null;
-    return this.props.players.entrySeq().map(([id, player]) => cb(player, id));
+    return this.props.players.map(cb).toList();
   }
 
   render() {
@@ -60,12 +60,16 @@ export default class Game3D extends React.Component {
       return (
         <React3 mainCamera="camera" {...{width, height, onAnimate}}>
           <scene>
-            <perspectiveCamera name="camera"
-              fov={75} aspect={width / height} near={0.1} far={1000}
-              position={new THREE.Vector3(0, 0, 5)} />
-
             <Provider store={this.store}>
-              <group>{this.mapPlayers((player, id) => <Tank.Connected playerId={id} key={id} />)}</group>
+              <group>
+                <perspectiveCamera name="camera"
+                  fov={75} aspect={width / height} near={0.1} far={1000}
+                  position={new THREE.Vector3(0, 0, 5)} />
+
+                {this.mapPlayers((player, id) => (
+                  <Tank.Connected playerId={id} key={id} />
+                ))}
+              </group>
             </Provider>
           </scene>
         </React3>
