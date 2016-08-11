@@ -22,6 +22,15 @@ export default class Game extends React.Component {
     this.props.disconnectFromServer();
   }
 
+  _onAnimate = () => {
+    // TODO: dispatch update
+  }
+
+  mapPlayers(cb) {
+    if (this.props.players.isEmpty()) return null;
+    return this.props.players.entrySeq().map(([id, player]) => cb(player, id));
+  }
+
   render() {
     if (this.props.player) {
       return (
@@ -30,7 +39,7 @@ export default class Game extends React.Component {
           <button onClick={this.onDisconnect}>Disconnect</button>
           <hr />
           <ul>
-            {this.props.players.isEmpty() ? null : this.props.players.entrySeq().map(([id, player]) => (
+            {this.mapPlayers((player, id) => (
               <li key={id}>#{player.get('id')}: {player.get('name')}</li>
             ))}
           </ul>

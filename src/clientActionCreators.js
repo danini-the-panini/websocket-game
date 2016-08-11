@@ -1,5 +1,5 @@
 import {
-  CONNECTING_TO_SERVER, CONNECTED_TO_SERVER, DISCONNECTED_FROM_SERVER, JOIN_SERVER, LEAVE_SERVER
+  CONNECTING_TO_SERVER, CONNECTED_TO_SERVER, DISCONNECTED_FROM_SERVER, JOIN_SERVER, LEAVE_SERVER, WINDOW_RESIZE, WINDOW_ANIMATE
 } from './actionTypes';
 import { addPlayer, removePlayer, setName } from './actions/playerActionCreators';
 
@@ -57,5 +57,17 @@ export function connectToServer(name) {
 export function disconnectFromServer() {
   return (dispatch, getState) => {
     getState().get('ws').close();
+  };
+}
+
+export function onAnimate() {
+  return { type: WINDOW_ANIMATE, at: +(new Date()) };
+}
+
+export function onWindowResize() {
+  return {
+    type: WINDOW_RESIZE,
+    width: window.innerWidth,
+    height: window.innerHeight
   };
 }

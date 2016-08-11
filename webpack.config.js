@@ -29,7 +29,8 @@ const BASE_CONFIG = Object.freeze({
         exclude: /node_modules/
       }
     ]
-  }
+  },
+  devtool: '#inline-source-map'
 });
 
 const CLIENT_CONFIG = Object.assign({}, BASE_CONFIG, {

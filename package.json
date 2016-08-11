@@ -26,12 +26,14 @@
     "express": "^4.13.4",
     "express-ws": "^2.0.0-beta",
     "immutable": "^3.8.1",
-    "react": "^15.3.0",
+    "react": "^15.2.1",
     "react-dom": "^15.2.1",
     "react-redux": "^4.4.5",
+    "react-three-renderer": "^2.2.0",
     "redux": "^3.5.2",
     "redux-logger": "^2.6.1",
     "redux-thunk": "^2.1.0",
+    "three": "^0.79.0",
     "webpack": "^1.13.1"
   },
   "devDependencies": {
@@ -51,8 +53,8 @@
     "mock-socket": "^4.0.1",
     "pug": "^2.0.0-beta4",
     "pug-loader": "^2.2.1",
-    "react-addons-test-utils": "^15.3.0",
-    "react-test-renderer": "^15.3.0",
+    "react-addons-test-utils": "^15.2.1",
+    "react-test-renderer": "^15.2.1",
     "redux-mock-store": "^1.1.2"
   }
 }

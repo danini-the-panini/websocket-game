@@ -8,7 +8,14 @@ import getInitialState from './getInitialState';
 import { Iterable } from 'immutable';
 
 const stateTransformer = state => Iterable.isIterable(state) ? state.toJS() : state;
-const loggerMiddleware = createLogger({ stateTransformer });
+const loggerMiddleware = createLogger({
+  level: ({ type }) => type.match(/ANIMATE/) ? null : 'log',
+  logger: {...console, group: (...args) => {
+    for (let arg of args) if (arg.match(/ANIMATE/)) return;
+    console.group(...args); // eslint-disable-line no-console
+  }},
+  stateTransformer
+});
 
 export default function configureStore(reducer = gameReducer, initialState = {}) {
   return createStore(
