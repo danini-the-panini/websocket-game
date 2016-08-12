@@ -17,7 +17,13 @@
       "node",
       "jsx"
     ],
-    "setupTestFrameworkScriptFile": "node_modules/jasmine-enzyme/lib/jest.js"
+    "setupTestFrameworkScriptFile": "<rootDir>/node_modules/jasmine-enzyme/lib/jest.js",
+    "coverageDirectory": "<rootDir>/coverage",
+    "collectCoverage": true,
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/dist/",
+      "<rootDir>/node_modules/"
+    ]
   },
   "author": "Daniel Smith <jellymann@gmail.com>",
   "license": "MIT",
