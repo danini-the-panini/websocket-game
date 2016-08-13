@@ -1,6 +1,5 @@
 /* eslint-env jest */
 
-import sinon from 'sinon';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
@@ -8,11 +7,11 @@ const middlewares = [ thunk ];
 const mockStore = configureMockStore(middlewares);
 
 const mockWebSocket = () => ({
-  send: sinon.spy()
+  send: jest.fn()
 });
 
 import {
-  ADD_PLAYER, CONNECTION_ACK
+  ADD_PLAYER
 } from '../actionTypes';
 
 import * as serverActionCreators from '../serverActionCreators';
@@ -27,8 +26,8 @@ describe('Server Action Creators', function() {
 
       store.dispatch(serverActionCreators.onClientConnected(123, ws));
 
-      expect(store.getActions[0].type).toBe(ADD_PLAYER);
-      expect(ws.sned).toHaveBeenCalledWith(sinon.match({ type: CONNECTION_ACK, id: 123 }));
+      expect(store.getActions()[0].type).toBe(ADD_PLAYER);
+      expect(ws.send).toBeCalled();
     });
   });
 });

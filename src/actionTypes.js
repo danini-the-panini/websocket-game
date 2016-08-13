@@ -11,3 +11,5 @@ export const LEAVE_SERVER = 'LEAVE_SERVER';
 
 export const WINDOW_RESIZE = 'WINDOW_RESIZE';
 export const WINDOW_ANIMATE = 'WINDOW_ANIMATE';
+export const KEY_UP = 'KEY_UP';
+export const KEY_DOWN = 'KEY_DOWN';

@@ -5,7 +5,9 @@ import { connect, Provider } from 'react-redux';
 import Immutable from 'immutable';
 import storeShape from 'react-redux/lib/utils/storeShape';
 
-import { connectToServer, disconnectFromServer, onAnimate, onWindowResize } from '../clientActionCreators';
+import {
+  connectToServer, disconnectFromServer, onAnimate, onWindowResize, onKeyDown, onKeyUp
+} from '../clientActionCreators';
 import Tank from './Tank';
 
 export default class Game3D extends React.Component {
@@ -20,6 +22,8 @@ export default class Game3D extends React.Component {
     disconnectFromServer: React.PropTypes.func.isRequired,
     onAnimate: React.PropTypes.func.isRequired,
     onWindowResize: React.PropTypes.func.isRequired,
+    onKeyDown: React.PropTypes.func.isRequired,
+    onKeyUp: React.PropTypes.func.isRequired,
 
     store: storeShape
   }
@@ -35,6 +39,8 @@ export default class Game3D extends React.Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.props.onWindowResize);
+    document.addEventListener('keydown', this.props.onKeyDown);
+    document.addEventListener('keyup', this.props.onKeyUp);
   }
 
   componentWillUnmount() {
@@ -91,5 +97,7 @@ Game3D.Connected = connect(
       height: state.get('windowHeight') || window.innerHeight
     };
   },
-  { connectToServer, disconnectFromServer, onAnimate, onWindowResize }
+  {
+    connectToServer, disconnectFromServer, onAnimate, onWindowResize, onKeyDown, onKeyUp
+  }
 )(Game3D);

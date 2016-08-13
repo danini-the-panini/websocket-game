@@ -1,5 +1,5 @@
 import {
-  CONNECTING_TO_SERVER, CONNECTED_TO_SERVER, DISCONNECTED_FROM_SERVER, JOIN_SERVER, LEAVE_SERVER, WINDOW_RESIZE, WINDOW_ANIMATE
+  CONNECTING_TO_SERVER, CONNECTED_TO_SERVER, DISCONNECTED_FROM_SERVER, JOIN_SERVER, LEAVE_SERVER, WINDOW_RESIZE, WINDOW_ANIMATE, KEY_UP, KEY_DOWN
 } from './actionTypes';
 import { addPlayer, removePlayer, setName } from './actions/playerActionCreators';
 
@@ -70,4 +70,12 @@ export function onWindowResize() {
     width: window.innerWidth,
     height: window.innerHeight
   };
+}
+
+export function onKeyDown(code) {
+  return { type: KEY_DOWN, code };
+}
+
+export function onKeyUp(code) {
+  return { type: KEY_UP, code };
 }

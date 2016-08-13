@@ -1,9 +1,20 @@
+import Immutable from 'immutable';
+
 import gameReducer from './reducers';
 import {
   CONNECTING_TO_SERVER, CONNECTED_TO_SERVER, DISCONNECTED_FROM_SERVER, CONNECTION_ACK,
-  WINDOW_ANIMATE, WINDOW_RESIZE
+  WINDOW_ANIMATE, WINDOW_RESIZE, KEY_UP, KEY_DOWN
 } from './actionTypes';
 import getInitialState from './getInitialState';
+
+function keysReducer(keys = Immutable.Map(), action) {
+  switch (action.type) {
+  case KEY_DOWN:
+    return keys.set(action.code, true);
+  case KEY_UP:
+    return keys.set(action.code, false);
+  }
+}
 
 function clientReducerImpl(state, action) {
   switch (action.type) {
@@ -20,7 +31,7 @@ function clientReducerImpl(state, action) {
   case WINDOW_RESIZE:
     return state.merge({ windowWidth: action.width, windowHeight: action.height });
   default:
-    return state;
+    return state.set('keys', keysReducer(state.get('kets'), action));
   }
 }
 
