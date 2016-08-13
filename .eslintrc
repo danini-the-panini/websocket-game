@@ -1,0 +1,23 @@
+env:
+  browser: true
+  es6: true
+
+extends:
+- "eslint:recommended"
+- "plugin:react/recommended"
+
+parser: "babel-eslint"
+parserOptions:
+  sourceType: module
+  ecmaFeatures:
+    jsx: true
+
+plugins:
+- react
+
+# http://eslint.org/docs/rules/
+rules:
+  indent: [error, 2]
+  linebreak-style: [error, unix]
+  quotes: [error, single]
+  semi: [error, always]
