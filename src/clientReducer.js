@@ -7,12 +7,14 @@ import {
 } from './actionTypes';
 import getInitialState from './getInitialState';
 
+import clientAnimationReducer from './clientAnimationReducer';
+
 function keysReducer(keys = Immutable.Map(), action) {
   switch (action.type) {
   case KEY_DOWN:
-    return keys.set(action.code, true);
+    return keys.set(action.key, true);
   case KEY_UP:
-    return keys.set(action.code, false);
+    return keys.set(action.key, false);
   }
 }
 
@@ -27,7 +29,7 @@ function clientReducerImpl(state, action) {
   case DISCONNECTED_FROM_SERVER:
     return getInitialState();
   case WINDOW_ANIMATE:
-    return state; // TODO
+    return clientAnimationReducer(state); // TODO
   case WINDOW_RESIZE:
     return state.merge({ windowWidth: action.width, windowHeight: action.height });
   default:

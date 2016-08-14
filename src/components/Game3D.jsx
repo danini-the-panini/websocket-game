@@ -9,6 +9,7 @@ import {
   connectToServer, disconnectFromServer, onAnimate, onWindowResize, onKeyDown, onKeyUp
 } from '../clientActionCreators';
 import Tank from './Tank';
+import KeyboardListener from './KeyboardListener';
 
 export default class Game3D extends React.Component {
   static propTypes = {
@@ -22,8 +23,6 @@ export default class Game3D extends React.Component {
     disconnectFromServer: React.PropTypes.func.isRequired,
     onAnimate: React.PropTypes.func.isRequired,
     onWindowResize: React.PropTypes.func.isRequired,
-    onKeyDown: React.PropTypes.func.isRequired,
-    onKeyUp: React.PropTypes.func.isRequired,
 
     store: storeShape
   }
@@ -39,8 +38,6 @@ export default class Game3D extends React.Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.props.onWindowResize);
-    document.addEventListener('keydown', this.props.onKeyDown);
-    document.addEventListener('keyup', this.props.onKeyUp);
   }
 
   componentWillUnmount() {
@@ -64,21 +61,24 @@ export default class Game3D extends React.Component {
     const { width, height, onAnimate } = this.props;
     if (this.props.player) {
       return (
-        <React3 mainCamera="camera" {...{width, height, onAnimate}}>
-          <scene>
-            <Provider store={this.store}>
-              <group>
-                <perspectiveCamera name="camera"
-                  fov={75} aspect={width / height} near={0.1} far={1000}
-                  position={new THREE.Vector3(0, 0, 5)} />
+        <div>
+          <KeyboardListener.Connected />
+          <React3 mainCamera="camera" {...{width, height, onAnimate}}>
+            <scene>
+              <Provider store={this.store}>
+                <group>
+                  <perspectiveCamera name="camera"
+                    fov={75} aspect={width / height} near={0.1} far={1000}
+                    position={new THREE.Vector3(0, 0, 5)} />
 
-                {this.mapPlayers((player, id) => (
-                  <Tank.Connected playerId={id} key={id} />
-                ))}
-              </group>
-            </Provider>
-          </scene>
-        </React3>
+                  {this.mapPlayers((player, id) => (
+                    <Tank.Connected playerId={id} key={id} />
+                  ))}
+                </group>
+              </Provider>
+            </scene>
+          </React3>
+        </div>
       );
     }
     return null;

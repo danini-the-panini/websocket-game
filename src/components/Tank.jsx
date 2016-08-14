@@ -17,9 +17,11 @@ export default class Tank extends React.Component {
   }
 
   getPosition() {
+    const position = this.props.player.get('position');
+    if (!position) return new THREE.Vector3();
     return new THREE.Vector3(
-      this.props.player.get('x') || 0.0,
-      this.props.player.get('y') || 0.0,
+      position.get('x') || 0.0,
+      position.get('y') || 0.0,
       0.0
     );
   }

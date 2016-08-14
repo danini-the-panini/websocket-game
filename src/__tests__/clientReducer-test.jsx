@@ -26,11 +26,11 @@ describe('Cient Reducer', function() {
     it('sets the state', function() {
       const action = {
         type: KEY_DOWN,
-        code: 42
+        key: 'ArrowLeft'
       };
       const newState = clientReducer(getInitialState(), action);
 
-      expect(newState.get('keys').get(42)).toBe(true);
+      expect(newState.get('keys').get('ArrowLeft')).toBe(true);
     });
   });
 
@@ -38,11 +38,11 @@ describe('Cient Reducer', function() {
     it('sets the state', function() {
       const action = {
         type: KEY_UP,
-        code: 42
+        key: 'ArrowLeft'
       };
       const newState = clientReducer(getInitialState(), action);
 
-      expect(newState.get('keys').get(42)).toBe(false);
+      expect(newState.get('keys').get('ArrowLeft')).toBe(false);
     });
   });
 });

@@ -72,10 +72,15 @@ export function onWindowResize() {
   };
 }
 
-export function onKeyDown(code) {
-  return { type: KEY_DOWN, code };
+export function onKeyDown({ key }) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const keys = state.get('keys');
+    if (keys && keys.get(key) === true) return;
+    dispatch({ type: KEY_DOWN, key });
+  };
 }
 
-export function onKeyUp(code) {
-  return { type: KEY_UP, code };
+export function onKeyUp({ key }) {
+  return { type: KEY_UP, key };
 }
