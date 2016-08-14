@@ -1,9 +1,9 @@
 /* eslint-env node */
 /* eslint-env jasmine */
 
-const path = require('path');
-require('jasmine-enzyme/lib/jest');
-const jasmineReporters = require('jasmine-reporters');
+import path from 'path';
+import 'jasmine-enzyme/lib/jest';
+import jasmineReporters from 'jasmine-reporters';
 
 let savePath = 'output/';
 if (process.env.CIRCLE_TEST_REPORTS) {
@@ -17,3 +17,25 @@ jasmine.getEnv().addReporter(
     consolidateAll: false
   })
 );
+
+// Custom matchers
+
+import Immutable from 'immutable';
+
+const customMatchers = {
+  toEqualJS() {
+    return {
+      compare(actual, expected) {
+        const pass = Immutable.is(actual, Immutable.fromJS(expected));
+        const message = pass ?
+          `Expected ${JSON.stringify(actual)} not to equal ${JSON.stringify(expected)}` :
+          `Expected ${JSON.stringify(actual)} to equal ${JSON.stringify(expected)}`;
+        return { pass, message };
+      }
+    };
+  }
+};
+
+beforeEach(function() {
+  jasmine.addMatchers(customMatchers);
+});

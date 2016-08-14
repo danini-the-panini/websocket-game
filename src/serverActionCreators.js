@@ -40,10 +40,9 @@ export function onClientAction(id, action) {
       broadcastAll(players, id, action);
       players
         .filterNot((_, key) => key === id)
-        .forEach(p => player.get('ws').send(JSON.stringify({
+        .forEach(otherPlayer => player.get('ws').send(JSON.stringify({
           type: JOIN_SERVER,
-          id: p.get('id'),
-          name: p.get('name')
+          ...otherPlayer.delete('ws').toJS()
         })));
       break;
     default:

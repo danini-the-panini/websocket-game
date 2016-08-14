@@ -1,13 +1,15 @@
 import Immutable from 'immutable';
-import { ADD_PLAYER, SET_NAME } from '../actionTypes';
+import { SET_NAME, PLAYER_UPDATE } from '../actionTypes';
 
 export default function playerReducer(player, action) {
-  const isCurrent = player && action.id === player.get('id');
   switch (action.type) {
-  case ADD_PLAYER:
-    return Immutable.Map({ id: action.id, ...action.data });
   case SET_NAME:
-    return isCurrent ? player.set('name', action.name) : player;
+    return player.set('name', action.name);
+  case PLAYER_UPDATE:
+    return player
+      .set('position', Immutable.Map(action.position))
+      .set('velocity', Immutable.Map(action.velocity))
+      .set('rotation', action.rotation);
   default:
     return player;
   }

@@ -1,5 +1,5 @@
 import {
-  CONNECTING_TO_SERVER, CONNECTED_TO_SERVER, DISCONNECTED_FROM_SERVER, JOIN_SERVER, LEAVE_SERVER, WINDOW_RESIZE, WINDOW_ANIMATE, KEY_UP, KEY_DOWN
+  CONNECTING_TO_SERVER, CONNECTED_TO_SERVER, DISCONNECTED_FROM_SERVER, JOIN_SERVER, LEAVE_SERVER, WINDOW_RESIZE, WINDOW_ANIMATE, KEY_UP, KEY_DOWN, PLAYER_UPDATE
 } from './actionTypes';
 import { addPlayer, removePlayer, setName } from './actions/playerActionCreators';
 
@@ -61,7 +61,19 @@ export function disconnectFromServer() {
 }
 
 export function onAnimate() {
-  return { type: WINDOW_ANIMATE, at: +(new Date()) };
+  return (dispatch, getState) => {
+    const state = getState();
+    const player = state.get('players').get(state.get('playerId'));
+    if (player) {
+      state.get('ws').send(JSON.stringify({
+        type: PLAYER_UPDATE,
+        position: player.get('position'),
+        velocity: player.get('velocity'),
+        rotation: player.get('rotation')
+      }));
+    }
+    dispatch({ type: WINDOW_ANIMATE, at: +(new Date()) });
+  };
 }
 
 export function onWindowResize() {

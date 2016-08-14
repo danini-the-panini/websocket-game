@@ -15,6 +15,8 @@ function keysReducer(keys = Immutable.Map(), action) {
     return keys.set(action.key, true);
   case KEY_UP:
     return keys.set(action.key, false);
+  default:
+    return keys;
   }
 }
 

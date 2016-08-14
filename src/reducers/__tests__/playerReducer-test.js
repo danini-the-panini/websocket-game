@@ -3,17 +3,10 @@
 import Immutable from 'immutable';
 
 import playerReducer from '../playerReducer';
-import { addPlayer, setName } from '../../actions/playerActionCreators';
+import { setName } from '../../actions/playerActionCreators';
+import { PLAYER_UPDATE } from '../../actionTypes';
 
 describe('playerReducer', function() {
-  describe('adding a player', function() {
-    it('returns a new player object', function() {
-      const newPlayer = playerReducer(undefined, addPlayer(123));
-
-      expect(newPlayer.get('id')).toBe(123);
-    });
-  });
-
   describe('setting player name', function() {
     it('sets the name on the player', function() {
       const oldPlayer = Immutable.Map({ id: 123 });
@@ -22,13 +15,23 @@ describe('playerReducer', function() {
 
       expect(newPlayer.get('name')).toBe('John Doe');
     });
+  });
 
-    it('does not set the player name if the id is not that of the player', function() {
+  describe('updating a player', function() {
+    it('sets the new values on the player object', function() {
       const oldPlayer = Immutable.Map({ id: 123 });
+      const playerUpdate = {
+        position: { x: 1, y: 2, z: 3 },
+        velocity: { x: 4, y: 5, z: 6 },
+        rotation: 7
+      };
 
-      const newPlayer = playerReducer(oldPlayer, setName(999, 'John Doe'));
+      const newPlayer = playerReducer(oldPlayer, { type: PLAYER_UPDATE, ...playerUpdate });
 
-      expect(newPlayer.has('name')).toBe(false);
+      expect(newPlayer).toEqualJS({
+        id: 123,
+        ...playerUpdate
+      });
     });
   });
 });
