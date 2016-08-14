@@ -22,7 +22,8 @@
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
       "/node_modules/",
-      "/__tests__/"
+      "/__tests__/",
+      "jest-setup-env"
     ]
   },
   "author": "Daniel Smith <jellymann@gmail.com>",
