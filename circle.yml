@@ -4,6 +4,6 @@ machine:
 
 test:
   post:
-    - COVERALLS_SERVICE_JOB_ID=$CIRCLE_BUILD_NUM node_modules/.bin/coveralls < coverage/lcov.info
+    - bash <(curl -s https://codecov.io/bash)
     - node_modules/.bin/codeclimate-test-reporter < coverage/lcov.info
     - cp -r coverage $CIRCLE_ARTIFACTS/coverage
