@@ -17,7 +17,7 @@
       "node",
       "jsx"
     ],
-    "setupTestFrameworkScriptFile": "<rootDir>/node_modules/jasmine-enzyme/lib/jest.js",
+    "setupTestFrameworkScriptFile": "<rootDir>/jest-setup-env.js",
     "coverageDirectory": "<rootDir>/coverage",
     "collectCoverage": true,
     "coveragePathIgnorePatterns": [
@@ -56,6 +56,7 @@
     "eslint-plugin-react": "^6.0.0",
     "html-webpack-plugin": "^2.22.0",
     "jasmine-enzyme": "^1.1.0",
+    "jasmine-reporters": "^2.2.0",
     "jest-cli": "^14.1.0",
     "mock-socket": "^4.0.1",
     "pug": "^2.0.0-beta4",
