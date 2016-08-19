@@ -3,13 +3,17 @@
 const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-function getNodeModulesExternals() {
+const getNodeModulesExternals = () => {
   const nodeModules = {};
+
   fs.readdirSync('node_modules')
     .filter(x => !x.match(/\.bin$/))
-    .forEach(mod => nodeModules[mod] = `commonjs ${mod}`);
+    .forEach(mod => {
+      nodeModules[mod] = `commonjs ${mod}`;
+    });
+
   return nodeModules;
-}
+};
 
 const BASE_CONFIG = Object.freeze({
   entry: [],
@@ -30,7 +34,7 @@ const BASE_CONFIG = Object.freeze({
       }
     ]
   },
-  devtool: '#inline-source-map'
+  devtool: 'inline-source-map'
 });
 
 const CLIENT_CONFIG = Object.assign({}, BASE_CONFIG, {
@@ -39,6 +43,19 @@ const CLIENT_CONFIG = Object.assign({}, BASE_CONFIG, {
     filename: 'scripts/client.js',
     path: './dist/public'
   },
+  module: Object.assign({}, BASE_CONFIG.module, {
+    loaders: [
+      ...BASE_CONFIG.module.loaders,
+      {
+        test: /\.(jpg|png)$/,
+        loader: 'url?limit=25000'
+      },
+      {
+        test: /\.scss$/,
+        loaders: ["style", "css", "sass"]
+      }
+    ]
+  }),
   plugins: [
     ...BASE_CONFIG.plugins,
     new HtmlWebpackPlugin({
@@ -50,9 +67,9 @@ const CLIENT_CONFIG = Object.assign({}, BASE_CONFIG, {
     proxy: {
       '/game': {
         target: 'ws://localhost:8001',
-        ws: true,
-      },
-    },
+        ws: true
+      }
+    }
   }
 });
 
@@ -67,5 +84,6 @@ const SERVER_CONFIG = Object.assign({}, BASE_CONFIG, {
 });
 
 module.exports = [
-  CLIENT_CONFIG, SERVER_CONFIG
+  CLIENT_CONFIG,
+  SERVER_CONFIG
 ];

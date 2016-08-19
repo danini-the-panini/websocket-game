@@ -1,7 +1,19 @@
 doctype html
 html
   head
+    meta(charset="utf-8")
     title Game
     
   body
-    #react-root
+    canvas#webgl_canvas
+    #overlay
+      table#scoreboard
+        thead
+          tr
+            th Name
+            th K
+            th D
+        tbody
+      #deathscreen(style="display:none")
+        #deathmessage You dead, bro!
+        #deathtimer 5
